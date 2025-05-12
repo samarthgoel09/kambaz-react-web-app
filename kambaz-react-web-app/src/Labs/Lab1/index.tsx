@@ -265,7 +265,7 @@ to get dummy text<br/>
   
  <h4 >Github anchor</h4>
  Please
- <a href="www" id="wd-github">click here</a>
+ <a href="https://github.com/samarthgoel09/kambaz-react-web-app" id="wd-github">click here</a>
  to visit github<br/> 
   
   </div>
