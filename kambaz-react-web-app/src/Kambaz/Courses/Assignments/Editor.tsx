@@ -1,16 +1,20 @@
-
+// src/Kambaz/Courses/Assignments/Editor.tsx
 export default function AssignmentEditor() {
   return (
     <div id="wd-assignments-editor">
       {/* Assignment Name */}
-      <label htmlFor="wd-name">Assignment Name</label><br />
-      <input id="wd-name" defaultValue="A1 - ENV + HTML" /><br /><br />
+      <label htmlFor="wd-name">Assignment Name</label>
+      <br />
+      <input id="wd-name" defaultValue="A1 - ENV + HTML" />
+      <br /><br />
 
       {/* Description */}
-      <label htmlFor="wd-description">Description</label><br />
+      <label htmlFor="wd-description">Description</label>
+      <br />
       <textarea id="wd-description" rows={4}>
         The assignment is available online. Submit a link to the landing page of...
-      </textarea><br /><br />
+      </textarea>
+      <br /><br />
 
       <table>
         <tbody>
@@ -29,7 +33,7 @@ export default function AssignmentEditor() {
             <td>
               <select id="wd-group">
                 <option value="none">None</option>
-                <option value="group1">Group 1</option>
+                <option value="group1">Group 1</option>
               </select>
             </td>
           </tr>
@@ -47,6 +51,20 @@ export default function AssignmentEditor() {
           <tr>
             <td align="right" valign="top">
               <label htmlFor="wd-submission-type">Submission Type</label>
+            </td>
+            <td>
+              <select id="wd-submission-type">
+                <option value="text-entry">Text Entry</option>
+                <option value="website-url">Website URL</option>
+                <option value="media-recordings">Media Recordings</option>
+                <option value="student-annotation">Student Annotation</option>
+                <option value="file-upload">File Upload</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td align="right" valign="top">
+              <label>Online Entry Options</label>
             </td>
             <td>
               <input type="checkbox" id="wd-text-entry" />
@@ -97,12 +115,12 @@ export default function AssignmentEditor() {
           </tr>
         </tbody>
       </table>
-            <div id="wd-editor-actions">
+
+      {/* Action buttons */}
+      <div id="wd-editor-actions">
         <button id="wd-cancel-btn">Cancel</button>
         <button id="wd-save-btn">Save</button>
       </div>
-
-
     </div>
   );
 }
