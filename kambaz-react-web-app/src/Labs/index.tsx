@@ -7,7 +7,7 @@ export default function Labs() {
   return (
     <div>
       <h1>Labs</h1>
-      <p id="wd-fullname">Samarth Goel</p>
+      <p id="wd-fullname">Samarth Goel, NUID- 002034159</p>
 
       <TOC />
       <Routes>

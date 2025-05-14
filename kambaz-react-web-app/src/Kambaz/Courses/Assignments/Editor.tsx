@@ -54,11 +54,7 @@ export default function AssignmentEditor() {
             </td>
             <td>
               <select id="wd-submission-type">
-                <option value="text-entry">Text Entry</option>
-                <option value="website-url">Website URL</option>
-                <option value="media-recordings">Media Recordings</option>
-                <option value="student-annotation">Student Annotation</option>
-                <option value="file-upload">File Upload</option>
+                <option value="file upload">Online</option>
               </select>
             </td>
           </tr>
