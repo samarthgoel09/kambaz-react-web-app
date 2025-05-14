@@ -11,7 +11,6 @@ Text documents are often broken up into several sections and subsections. Each s
   <h4>Paragraph Tag</h4>
   <p id="wd-p-1">
 This is a paragraph. We often separate a long set of sentences with vertical spaces to make the text easier to read. Browsers ignore vertical white spaces and render all the text as one single set of sentences. To force the browser to add vertical spacing, wrap the paragraphs you want to separate with the paragraph tag  </p>
-  <p id="wd-p-1"> ... </p>
   <p id="wd-p-2">
 This is the first paragraph. The paragraph tag is used to format vertical gaps between long pieces of text like this one.
  </p>
@@ -36,8 +35,7 @@ This is the third paragraph. Wrap each paragraph with the paragraph tag to tell 
     <li>Flip and cook the other side.</li>
     <li>Serve and enjoy!</li>
   </ol>
-  <h6> Ordered list tag</h6>
-  After pancakes, lets learn how to make butter chicken:
+  After pancakes, lets learn how to make my favorite recipe, which is butter chicken:
 <ol id="wd-butter-chicken">
   <li>In a large bowl, combine 1 cup yogurt, 1 tbsp lemon juice, 1 tbsp ginger-garlic paste, 1 tsp garam masala, 1 tsp chili powder, ½ tsp turmeric, and salt to taste.</li>
   <li>Add 1 lb bite-sized chicken pieces, toss well, and marinate in the refrigerator for at least 1 hour (or up to overnight).</li>
@@ -207,6 +205,15 @@ Your favorite books (in no particular order)
         id="wd-all-good">
   Hello World!
 </button>
+<br/>
+<br/>
+
+      <button
+        type="button"
+        id="wd-file-upload-button"
+      >
+                File Upload
+      </button>
 
 <h5 id="wd-radio-buttons">Radio buttons</h5>
 
