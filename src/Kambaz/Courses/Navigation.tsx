@@ -1,4 +1,3 @@
-// src/Kambaz/Courses/Navigation.tsx
 import { ListGroup } from "react-bootstrap";
 import { NavLink, useParams } from "react-router-dom";
 

@@ -32,7 +32,7 @@ export default function Signin() {
               <Button
                 id="wd-signin-btn"
                 variant="primary"
-                type="submit"              // triggers handleSignIn
+                type="submit"              
                 className="w-100 mb-3"
               >
                 Sign in

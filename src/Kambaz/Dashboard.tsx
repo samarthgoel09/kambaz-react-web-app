@@ -8,7 +8,6 @@ interface Course {
   color:    "success" | "primary" | "info" | "warning";
 }
 
-// at least 7 items
 const courses: Course[] = [
   { id: "1234", title: "CS1234 React JS",       subtitle: "Full Stack software developer.",    color: "success" },
   { id: "2345", title: "CS2345 Java Basics",    subtitle: "Introduction to Java programming.", color: "info"    },
@@ -22,22 +21,17 @@ const courses: Course[] = [
 export default function KambazDashboard() {
   return (
     <div id="wd-dashboard">
-      {/* 1) Title + hr */}
       <h1 id="wd-dashboard-title">Dashboard</h1>
       <hr />
-
-      {/* 2) Subtitle */}
       <h2 id="wd-dashboard-published" className="h5 text-secondary">
         Published Courses ({courses.length})
       </h2>
-
-      {/* 3) wrapping grid with fixed‑width cards */}
       <div
         id="wd-dashboard-courses"
         className="d-flex flex-wrap mt-4"
         style={{
-          columnGap: "30px",   /* 30px between cards horizontally */
-          rowGap:    "40px",   /* 40px vertically */
+          columnGap: "30px",   
+          rowGap:    "40px",   
         }}
       >
         {courses.map(({ id, title, subtitle, color }) => (
@@ -45,11 +39,10 @@ export default function KambazDashboard() {
             key={id}
             style={{
               flex:  "0 0 auto",
-              width: "270px",   /* fixed card width */
+              width: "270px",   
             }}
           >
             <Card className="h-100">
-              {/* colored header */}
               <div
                 className={`bg-${color}`}
                 style={{ height: "140px", borderTopLeftRadius: "0.25rem", borderTopRightRadius: "0.25rem" }}
@@ -59,7 +52,6 @@ export default function KambazDashboard() {
                 <Card.Text className="text-truncate text-muted" style={{ height: "3rem" }}>
                   {subtitle}
                 </Card.Text>
-                {/* makes the entire card clickable */}
                 <Link to={`/Kambaz/Courses/${id}/Home`} className="stretched-link" />
               </Card.Body>
             </Card>

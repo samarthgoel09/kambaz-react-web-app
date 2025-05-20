@@ -26,10 +26,10 @@ export default function Courses() {
               <Route path="Assignments/:aid" element={<AssignmentEditor/>} />
               <Route path="People" element={<PeopleTable />} />
               <Route path="Piazza"     element={<h2 className="p-3">Piazza</h2>} />
-+         <Route path="Zoom"       element={<h2 className="p-3">Zoom Meetings</h2>} />
-+         <Route path="Quizzes"    element={<h2 className="p-3">Quizzes</h2>} />
-+         <Route path="Grades"     element={<h2 className="p-3">Grades</h2>} />
-+         <Route path="People"     element={<h2 className="p-3">People</h2>} />
+              <Route path="Zoom"       element={<h2 className="p-3">Zoom Meetings</h2>} />
+              <Route path="Quizzes"    element={<h2 className="p-3">Quizzes</h2>} />
+              <Route path="Grades"     element={<h2 className="p-3">Grades</h2>} />
+              <Route path="People"     element={<h2 className="p-3">People</h2>} />
             </Routes>
  </div>
  </div>

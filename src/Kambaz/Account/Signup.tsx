@@ -1,15 +1,12 @@
-// src/Kambaz/Account/Signup.tsx
 import React from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import AccountNavigation from "./Navigation";
 
 export default function Signup() {
   const navigate = useNavigate();
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: perform signup logic…
     navigate("/Kambaz/Account/Profile");
   };
 

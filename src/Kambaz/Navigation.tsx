@@ -1,5 +1,4 @@
-// src/Kambaz/Navigation.tsx
-import React from "react";
+
 import { ListGroup } from "react-bootstrap";
 import { AiOutlineDashboard } from "react-icons/ai";
 import { FaFlask, FaInbox, FaRegCircleUser } from "react-icons/fa6";
@@ -23,7 +22,6 @@ export default function KambazNavigation() {
       style={{ width: "110px" }}
       className="position-fixed top-0 bottom-0 d-none d-md-block bg-black z-2 rounded-0"
     >
-      {/* NEU logo */}
       <ListGroup.Item
         as="a"
         href="https://www.northeastern.edu/"

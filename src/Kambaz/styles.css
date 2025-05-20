@@ -1,4 +1,3 @@
-/* reset & base font */
 body {
   margin: 0;
   padding: 0;
@@ -56,7 +55,7 @@ body * {
   background-color: #fff !important;
 }
 #wd-course-nav .nav-link {
-  color: #dc3545; /* keep your text-danger style */
+  color: #dc3545; 
 }
 #wd-publish-all-btn.no-caret::after {
   display: none !important;
