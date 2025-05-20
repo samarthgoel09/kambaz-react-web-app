@@ -4,8 +4,8 @@ import { FaUserCircle } from "react-icons/fa";
 export default function PeopleTable() {
   return (
     <div id="wd-people-table">
-      <Table striped>
-        <thead>
+<Table striped variant="light">
+            <thead>
           <tr>
             <th>Name</th>
             <th>Login ID</th>
@@ -16,6 +16,7 @@ export default function PeopleTable() {
           </tr>
         </thead>
         <tbody>
+            
           <tr>
             <td className="wd-full-name text-nowrap">
               <FaUserCircle className="me-2 fs-1 text-secondary" />
@@ -23,7 +24,7 @@ export default function PeopleTable() {
               <span className="wd-last-name">Stark</span>
             </td>
             <td className="wd-login-id">001234561S</td>
-            <td className="wd-section">S101</td>
+            <td className="wd-section">S1</td>
             <td className="wd-role">STUDENT</td>
             <td className="wd-last-activity">2020-10-01</td>
             <td className="wd-total-activity">10:21:32</td>
@@ -31,11 +32,11 @@ export default function PeopleTable() {
           <tr>
             <td className="wd-full-name text-nowrap">
               <FaUserCircle className="me-2 fs-1 text-secondary" />
-              <span className="wd-first-name">Bruce</span>{" "}
-              <span className="wd-last-name">Wayne</span>
+              <span className="wd-first-name">Peter</span>{" "}
+              <span className="wd-last-name">Parker</span>
             </td>
             <td className="wd-login-id">001234562S</td>
-            <td className="wd-section">S101</td>
+            <td className="wd-section">S2</td>
             <td className="wd-role">STUDENT</td>
             <td className="wd-last-activity">2020-09-25</td>
             <td className="wd-total-activity">08:45:10</td>
@@ -47,7 +48,7 @@ export default function PeopleTable() {
               <span className="wd-last-name">Rogers</span>
             </td>
             <td className="wd-login-id">001234563S</td>
-            <td className="wd-section">S102</td>
+            <td className="wd-section">S3</td>
             <td className="wd-role">TEACHING ASSISTANT</td>
             <td className="wd-last-activity">2020-10-03</td>
             <td className="wd-total-activity">12:15:00</td>
@@ -59,8 +60,8 @@ export default function PeopleTable() {
               <span className="wd-last-name">Romanoff</span>
             </td>
             <td className="wd-login-id">001234564S</td>
-            <td className="wd-section">S102</td>
-            <td className="wd-role">FACULTY</td>
+            <td className="wd-section">S4</td>
+            <td className="wd-role">TEACHER</td>
             <td className="wd-last-activity">2020-10-02</td>
             <td className="wd-total-activity">09:30:45</td>
           </tr>

@@ -32,6 +32,7 @@ export default function Modules() {
                 <LessonControlButtons />
               </ListGroup.Item>
               <ListGroup.Item className="wd-lesson p-3 ps-1">
+                <BsGripVertical className="me-2 fs-3" />
                 Learn what is Web Development
                 <LessonControlButtons />
               </ListGroup.Item>
