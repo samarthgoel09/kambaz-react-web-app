@@ -46,12 +46,12 @@ export default function Modules() {
             <ListGroup className="wd-lessons rounded-0">
               <ListGroup.Item className="wd-lesson p-3 ps-1">
                 <BsGripVertical className="me-2 fs-3" />
-                LESSON 1
+                Setting Up Your Development Environment
                 <LessonControlButtons />
               </ListGroup.Item>
               <ListGroup.Item className="wd-lesson p-3 ps-1">
                 <BsGripVertical className="me-2 fs-3" />
-                LESSON 2
+                CSS Basics & Selectors
                 <LessonControlButtons />
               </ListGroup.Item>
             </ListGroup>
