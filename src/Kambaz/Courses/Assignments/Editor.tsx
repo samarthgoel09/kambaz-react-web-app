@@ -1,7 +1,7 @@
 import {
   Form,
   Button,
-  Card,       // ← import Card
+  Card,      
   Row,
   Col,
 } from "react-bootstrap";
@@ -10,7 +10,6 @@ export default function AssignmentEditor() {
   return (
     <Form className="p-3">
 
-      {/* Assignment Name */}
       <Form.Group controlId="assignmentName" className="mb-4">
         <Form.Label>Assignment Name</Form.Label>
 <Form.Control
@@ -19,7 +18,6 @@ export default function AssignmentEditor() {
    defaultValue="A1"
 />      </Form.Group>
 
-      {/* ─── Description (restored!) ───────────────────────── */}
       <Form.Group controlId="assignmentDescription" className="mb-4">
         <Form.Label>Description</Form.Label>
         <Card className="border mb-3">
@@ -48,8 +46,6 @@ export default function AssignmentEditor() {
           </Card.Body>
         </Card>
       </Form.Group>
-
-      {/* Points */}
       <Form.Group as={Row} controlId="points" className="mb-3">
         <Form.Label column xs={12} sm={3}>
           Points
@@ -58,8 +54,6 @@ export default function AssignmentEditor() {
           <Form.Control type="number" defaultValue={100} />
         </Col>
       </Form.Group>
-
-      {/* Assignment Group */}
       <Form.Group as={Row} controlId="assignmentGroup" className="mb-3">
         <Form.Label column xs={12} sm={3}>
           Assignment Group
@@ -71,8 +65,6 @@ export default function AssignmentEditor() {
           </Form.Select>
         </Col>
       </Form.Group>
-
-      {/* Display Grade as */}
       <Form.Group as={Row} controlId="displayAs" className="mb-3">
         <Form.Label column xs={12} sm={3}>
           Display Grade as
@@ -84,17 +76,14 @@ export default function AssignmentEditor() {
           </Form.Select>
         </Col>
       </Form.Group>
-
       <Form.Group as={Row} className="mb-4" controlId="submissionType">
     <Form.Label column xs={12} sm={3}>
       Submission Type
     </Form.Label>
     <Col xs={12} sm={9}>
-      {/* Unified grey container around both the select and the options */}
       <div className="border rounded p-3">
-        {/* Remove the select’s own border and focus ring */}
         <Form.Select
-  defaultValue="online"    // ← this makes “Online” selected by default
+  defaultValue="online"    
   className="mb-3"
   style={{ boxShadow: "none" }}
 >
@@ -115,13 +104,6 @@ export default function AssignmentEditor() {
       </div>
     </Col>
   </Form.Group>
-
-
-
-
-  
-
-      {/* Assign to */}
       <Form.Group as={Row} controlId="assignTo" className="mb-4">
         <Form.Label column xs={12} sm={3}>
           Assign to
@@ -130,8 +112,6 @@ export default function AssignmentEditor() {
           <Form.Control defaultValue="Everyone" />
         </Col>
       </Form.Group>
-
-      {/* Due */}
       <Form.Group as={Row} controlId="dueDate" className="mb-4">
         <Form.Label column xs={12} sm={3}>
           Due
@@ -140,8 +120,6 @@ export default function AssignmentEditor() {
           <Form.Control type="date" defaultValue="2024-05-13" />
         </Col>
       </Form.Group>
-
-      {/* Available from */}
       <Form.Group as={Row} controlId="availableFrom" className="mb-4">
         <Form.Label column xs={12} sm={3}>
           Available from
@@ -150,8 +128,6 @@ export default function AssignmentEditor() {
           <Form.Control type="date" defaultValue="2024-05-06" />
         </Col>
       </Form.Group>
-
-      {/* Until */}
       <Form.Group as={Row} controlId="availableUntil" className="mb-4">
         <Form.Label column xs={12} sm={3}>
           Until
@@ -160,8 +136,6 @@ export default function AssignmentEditor() {
           <Form.Control type="date" defaultValue="2024-05-20" />
         </Col>
       </Form.Group>
-
-      {/* Actions */}
       <div className="d-flex justify-content-end mt-3">
         <Button variant="secondary" className="me-2">
           Cancel

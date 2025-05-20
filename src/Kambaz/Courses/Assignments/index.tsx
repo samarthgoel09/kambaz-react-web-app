@@ -56,8 +56,6 @@ export default function Assignments() {
           <FaPlus className="me-1" /> Assignment
         </Button>
       </div>
-
-      {/* Header bar */}
       <ListGroup className="rounded-0">
         <ListGroup.Item className="p-0 mb-3" style={{ border: "1px solid #dee2e6" }}>
           <div
@@ -77,7 +75,6 @@ export default function Assignments() {
             </div>
           </div>
         </ListGroup.Item>
-
         {sampleAssignments.map((a, i) => (
           <ListGroup.Item
             key={i}
@@ -99,17 +96,17 @@ export default function Assignments() {
     {a.title}
   </Link>
 </div>
-              {/* Availability line */}
-              <div className="text-secondary mb-1" style={{ fontSize: "0.9rem" }}>
-                {a.modules} | <strong>Not available until</strong> {a.availableAt}
-              </div>
-              {/* Due line */}
+             <div className="text-secondary mb-1" style={{ fontSize: "0.9rem" }}>
+    {a.modules}{" "}
+    |{" "}
+    <strong>Not available until</strong>{" "}
+    {a.availableAt}{" "}
+    |{" "}
+  </div>
               <div className="text-secondary" style={{ fontSize: "0.9rem" }}>
                 <strong>Due</strong> {a.dueAt} | {a.points}
               </div>
             </div>
-
-            {/* Always show the green check and the ellipsis */}
             <div className="d-flex align-items-center">
               <GreenCheckmark />
               <IoEllipsisVertical className="fs-4 text-secondary ms-3" />
