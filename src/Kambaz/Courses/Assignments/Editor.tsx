@@ -1,147 +1,165 @@
-import {
-  Form,
-  Button,
-  Card,      
-  Row,
-  Col,
-} from "react-bootstrap";
+
+import { useParams, Link } from "react-router-dom";
+import * as db from "../../Database";
+import { Form, Row, Col } from "react-bootstrap";
 
 export default function AssignmentEditor() {
+  const { cid, aid } = useParams<{ cid: string; aid: string }>();
+  const assignment = db.assignments.find((a) => a._id === aid);
+
+  if (!assignment) {
+    return <h2 className="p-3">Assignment not found</h2>;
+  }
+
   return (
-    <Form className="p-3">
-
-      <Form.Group controlId="assignmentName" className="mb-4">
-        <Form.Label>Assignment Name</Form.Label>
-<Form.Control
-   type="text"
-   placeholder="Enter assignment title"
-   defaultValue="A1"
-/>      </Form.Group>
-
-      <Form.Group controlId="assignmentDescription" className="mb-4">
-        <Form.Label>Description</Form.Label>
-        <Card className="border mb-3">
-          <Card.Body>
-            <p>
-              The assignment is{" "}
-              <a href="#" className="text-danger">
-                available online
-              </a>
-              .
-            </p>
-            <p>
-              Submit a link to the landing page of your Web application
-              running on Netlify.
-            </p>
-            <ul>
-              <li>Your full name and section</li>
-              <li>Links to each of the lab assignments</li>
-              <li>Link to the Kanbaz application</li>
-              <li>Links to all relevant source code repositories</li>
-            </ul>
-            <p>
-              The Kanbaz application should include a link to navigate back to
-              the landing page.
-            </p>
-          </Card.Body>
-        </Card>
-      </Form.Group>
-      <Form.Group as={Row} controlId="points" className="mb-3">
-        <Form.Label column xs={12} sm={3}>
-          Points
-        </Form.Label>
-        <Col xs={12} sm={9}>
-          <Form.Control type="number" defaultValue={100} />
-        </Col>
-      </Form.Group>
-      <Form.Group as={Row} controlId="assignmentGroup" className="mb-3">
-        <Form.Label column xs={12} sm={3}>
-          Assignment Group
-        </Form.Label>
-        <Col xs={12} sm={9}>
-          <Form.Select defaultValue="assignments">
-            <option>ASSIGNMENTS</option>
-            <option>QUIZZES</option>
+    <div className="p-3">
+      <h2>{assignment.title}</h2>
+      <hr />
+      <Form>
+        <Form.Group controlId="wd-assn-name" className="mb-3">
+          <Form.Label>Assignment Name</Form.Label>
+          <Form.Control defaultValue={assignment.title} />
+        </Form.Group>
+        <Form.Group controlId="wd-assn-desc" className="mb-4">
+         <div
+           className="border rounded p-3"
+           dangerouslySetInnerHTML={{ __html: assignment.descriptionHtml }}
+         />
+       </Form.Group>
+        <Form.Group as={Row} controlId="wd-assn-points" className="mb-3">
+          <Form.Label column sm={3}>
+            Points
+          </Form.Label>
+          <Col sm={3}>
+            <Form.Control
+              type="number"
+              defaultValue={assignment.points}
+            />
+          </Col>
+        </Form.Group>
+        <Form.Group as={Row} controlId="wd-assn-group" className="mb-3">
+          <Form.Label column sm={3}>
+            Assignment Group
+          </Form.Label>
+          <Col sm={6}>
+            <Form.Select defaultValue={assignment.group}>
+              <option>ASSIGNMENTS</option>
+              <option>QUIZZES</option>
+              <option>DISCUSSIONS</option>
+            </Form.Select>
+          </Col>
+        </Form.Group>
+        <Form.Group as={Row} controlId="wd-assn-display" className="mb-3">
+          <Form.Label column sm={3}>
+            Display Grade as
+          </Form.Label>
+          <Col sm={6}>
+            <Form.Select defaultValue={assignment.displayGradeAs}>
+              <option>Percentage</option>
+              <option>Points</option>
+              <option>Letter</option>
+            </Form.Select>
+          </Col>
+        </Form.Group>
+        <Form.Group controlId="wd-assn-submission" className="mb-4">
+          <Form.Label>Submission Type</Form.Label>
+          <Form.Select defaultValue={assignment.submissionType}>
+            <option>Online</option>
+            <option>On Paper</option>
+            <option>No Submission</option>
           </Form.Select>
-        </Col>
-      </Form.Group>
-      <Form.Group as={Row} controlId="displayAs" className="mb-3">
-        <Form.Label column xs={12} sm={3}>
-          Display Grade as
-        </Form.Label>
-        <Col xs={12} sm={9}>
-          <Form.Select defaultValue="percentage">
-            <option>Percentage</option>
-            <option>Letter</option>
-          </Form.Select>
-        </Col>
-      </Form.Group>
-      <Form.Group as={Row} className="mb-4" controlId="submissionType">
-    <Form.Label column xs={12} sm={3}>
-      Submission Type
-    </Form.Label>
-    <Col xs={12} sm={9}>
-      <div className="border rounded p-3">
-        <Form.Select
-  defaultValue="online"    
-  className="mb-3"
-  style={{ boxShadow: "none" }}
->
-  <option value="online">Online</option>
-  <option value="offline">Offline</option>
-</Form.Select>
-        <div className="fw-semibold mb-2">Online Entry Options</div>
-        <Form.Check type="checkbox" label="Text Entry" className="mb-2" />
-       <Form.Check
-          type="checkbox"
-          label="Website URL"
-          defaultChecked
-          className="mb-2"
-        />
-       <Form.Check type="checkbox" label="Media Recordings" className="mb-2" />
-        <Form.Check type="checkbox" label="Student Annotation" className="mb-2" />
-        <Form.Check type="checkbox" label="File Uploads" />
-      </div>
-    </Col>
-  </Form.Group>
-      <Form.Group as={Row} controlId="assignTo" className="mb-4">
-        <Form.Label column xs={12} sm={3}>
-          Assign to
-        </Form.Label>
-        <Col xs={12} sm={9}>
-          <Form.Control defaultValue="Everyone" />
-        </Col>
-      </Form.Group>
-      <Form.Group as={Row} controlId="dueDate" className="mb-4">
-        <Form.Label column xs={12} sm={3}>
-          Due
-        </Form.Label>
-        <Col xs={12} sm={9}>
-          <Form.Control type="date" defaultValue="2024-05-13" />
-        </Col>
-      </Form.Group>
-      <Form.Group as={Row} controlId="availableFrom" className="mb-4">
-        <Form.Label column xs={12} sm={3}>
-          Available from
-        </Form.Label>
-        <Col xs={12} sm={9}>
-          <Form.Control type="date" defaultValue="2024-05-06" />
-        </Col>
-      </Form.Group>
-      <Form.Group as={Row} controlId="availableUntil" className="mb-4">
-        <Form.Label column xs={12} sm={3}>
-          Until
-        </Form.Label>
-        <Col xs={12} sm={9}>
-          <Form.Control type="date" defaultValue="2024-05-20" />
-        </Col>
-      </Form.Group>
-      <div className="d-flex justify-content-end mt-3">
-        <Button variant="secondary" className="me-2">
-          Cancel
-        </Button>
-        <Button variant="danger">Save</Button>
-      </div>
-    </Form>
+          {assignment.submissionType === "Online" && (
+   <div className="border rounded p-3 mt-2">
+     <strong>Online Entry Options</strong>
+     <Form.Check
+       type="checkbox"
+       label="Text Entry"
+      defaultChecked={assignment.entryOptions.text}
+       className="mt-2"
+     />
+     <Form.Check
+       type="checkbox"
+       label="Website URL"
+      defaultChecked={assignment.entryOptions.website}
+     />
+     <Form.Check
+       type="checkbox"
+       label="Media Recordings"
+       defaultChecked={assignment.entryOptions.media}
+     />
+     <Form.Check
+       type="checkbox"
+       label="Student Annotation"
+       defaultChecked={assignment.entryOptions.annotation}
+     />
+     <Form.Check
+       type="checkbox"
+       label="File Uploads"
+       defaultChecked={assignment.entryOptions.file}
+     />
+   </div>
+ )}
+        </Form.Group>
+        <Row className="mb-4">
+          <Col md={3}>
+            <Form.Group controlId="wd-assn-assign">
+              <Form.Label>Assign to</Form.Label>
+              <Form.Control defaultValue={assignment.assignTo} />
+            </Form.Group>
+          </Col>
+          <Col md={9}>
+            <div className="border rounded p-3">
+              <Row className="mb-3">
+                <Form.Label column sm={3}>
+                  Due
+                </Form.Label>
+                <Col sm={9}>
+                  <Form.Control
+                    type="datetime-local"
+                    defaultValue={assignment.dueDate}
+                  />
+                </Col>
+              </Row>
+              <Row className="mb-3">
+                <Form.Label column sm={3}>
+                  Available from
+                </Form.Label>
+                <Col sm={9}>
+                  <Form.Control
+                    type="datetime-local"
+                    defaultValue={assignment.availableFrom}
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Form.Label column sm={3}>
+                  Until
+                </Form.Label>
+                <Col sm={9}>
+                  <Form.Control
+                    type="datetime-local"
+                    defaultValue={assignment.availableUntil}
+                  />
+                </Col>
+              </Row>
+            </div>
+          </Col>
+        </Row>
+        <div className="d-flex justify-content-end">
+          <Link
+            to={`/Kambaz/Courses/${cid}/Assignments`}
+            className="btn btn-secondary me-2"
+          >
+            Cancel
+          </Link>
+          <Link
+            to={`/Kambaz/Courses/${cid}/Assignments`}
+            className="btn btn-danger"
+          >
+            Save
+          </Link>
+        </div>
+      </Form>
+    </div>
   );
 }
