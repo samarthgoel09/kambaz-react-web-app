@@ -1,57 +1,127 @@
+import  { useState } from "react";
 import { useParams } from "react-router-dom";
-import * as db from "../../Database";
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState } from "../../store";
+
+import {
+  addModule,
+  deleteModule,
+  editModule,
+  updateModule,
+} from "./reducer";
+
 import ModulesControls from "./ModulesControls";
 import ModuleControlButtons from "./ModuleControlButtons";
 import LessonControlButtons from "./LessonControlButtons";
-import { ListGroup } from "react-bootstrap";
+
+import { ListGroup, FormControl } from "react-bootstrap";
 import { BsGripVertical } from "react-icons/bs";
 
 export default function Modules() {
-    const { cid } = useParams<{ cid: string }>();
-    const courseModules = db.modules.filter((m) => m.course === cid);
+  const { cid } = useParams<{ cid: string }>();
+  const dispatch = useDispatch();
 
-    return (
-        <div className="d-flex">
-            <div className="flex-fill pe-4">
-                <ModulesControls />
-                <hr />
+  const [moduleName, setModuleName] = useState("");
 
-                <ListGroup id="wd-modules" className="rounded-0">
-                    {courseModules.map((mod) => (
-                        <ListGroup.Item
-                            key={mod._id}
-                            className="wd-module p-0 mb-5 fs-5 border-gray"
-                        >
-                            <div className="wd-title p-3 ps-2 bg-secondary d-flex align-items-center">
-                                <BsGripVertical className="me-2 fs-3" />
-                                {mod.name}
-                                <span className="ms-auto">
-                  <ModuleControlButtons />
-                </span>
-                            </div>
+  const modules = useSelector((state: RootState) =>
+    state.modulesReducer.modules.filter((m: any) => m.course === cid)
+  );
 
-                            {mod.lessons && (
-                                <ListGroup className="wd-lessons rounded-0">
-                                    {mod.lessons.map((lesson) => (
-                                        <ListGroup.Item
-                                            key={lesson._id}
-                                            className="wd-lesson p-3 ps-1 d-flex align-items-center"
-                                        >
-                                            <BsGripVertical className="me-2 fs-3" />
-                                            {lesson.name}
-                                            <span className="ms-auto">
-                        <LessonControlButtons />
-                      </span>
-                                        </ListGroup.Item>
-                                    ))}
-                                </ListGroup>
-                            )}
-                        </ListGroup.Item>
-                    ))}
-                </ListGroup>
+  const handleAddModule = () => {
+    dispatch(addModule({ name: moduleName, course: cid! }));
+    setModuleName("");
+  };
+
+  const handleDeleteModule = (moduleId: string) => {
+    dispatch(deleteModule(moduleId));
+  };
+
+  const handleEditModule = (moduleId: string) => {
+    dispatch(editModule(moduleId));
+  };
+
+  const handleUpdateModule = (updatedModule: any) => {
+    dispatch(updateModule(updatedModule));
+  };
+
+  return (
+    <div className="wd-modules px-4">
+      <h2 className="mb-3">Modules for Course: {cid}</h2>
+
+      <ModulesControls
+        moduleName={moduleName}
+        setModuleName={setModuleName}
+        addModule={handleAddModule}
+      />
+      <hr />
+
+      <ListGroup id="wd-modules" className="rounded-0">
+        {modules.map((mod: any) => (
+          <ListGroup.Item
+            key={mod._id}
+            style={{ backgroundColor: "#e2e4e6" }}
+            className="wd-module p-0 mb-3 fs-5 border-0"
+          >
+            <div className="wd-title p-3 ps-2 d-flex align-items-center">
+              <BsGripVertical className="me-2 fs-3 text-secondary" />
+
+              {!mod.editing && <span className="flex-grow-1">{mod.name}</span>}
+              {mod.editing && (
+                <FormControl
+                  className="w-50 d-inline-block me-3"
+                  defaultValue={mod.name}
+                  onChange={(e) =>
+                    handleUpdateModule({ ...mod, name: e.target.value })
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleUpdateModule({ ...mod, editing: false });
+                    }
+                  }}
+                />
+              )}
+
+              <ModuleControlButtons
+                moduleId={mod._id}
+                editModule={handleEditModule}
+                deleteModule={handleDeleteModule}
+                publishModule={() =>
+                  console.log("Publish Module", mod._id)
+                }
+                addLesson={() =>
+                  console.log("Add Lesson under", mod._id)
+                }
+                onMore={() =>
+                  console.log("More options for", mod._id)
+                }
+              />
             </div>
 
-
-        </div>
-    );
+            {mod.lessons && mod.lessons.length > 0 && (
+              <ListGroup className="wd-lessons rounded-0 border-top-0">
+                {mod.lessons.map((lesson: any) => (
+                  <ListGroup.Item
+                    key={lesson._id}
+                    className="wd-lesson p-3 ps-1 d-flex align-items-center"
+                  >
+                    <BsGripVertical className="me-2 fs-3 text-secondary" />
+                    <span className="flex-grow-1">{lesson.name}</span>
+                    <LessonControlButtons
+                      lessonId={lesson._id}
+                      editLesson={(lid) =>
+                        console.log("Edit lesson", lid)
+                      }
+                      deleteLesson={(lid) =>
+                        console.log("Delete lesson", lid)
+                      }
+                    />
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            )}
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
+    </div>
+  );
 }

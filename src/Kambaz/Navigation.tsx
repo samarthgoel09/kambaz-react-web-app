@@ -1,3 +1,4 @@
+
 import { ListGroup } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import { FaRegCircleUser } from "react-icons/fa6";
@@ -23,7 +24,7 @@ export default function KambazNavigation() {
       match: (p: string) => p === "/Kambaz/Dashboard",
     },
     {
-      to: "/Kambaz/Dashboard",          
+      to: "/Kambaz/Courses",
       label: "Courses",
       Icon: LiaBookSolid,
       match: (p: string) => p.startsWith("/Kambaz/Courses"),

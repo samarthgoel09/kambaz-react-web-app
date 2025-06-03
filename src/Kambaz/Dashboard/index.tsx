@@ -27,7 +27,6 @@ export default function Dashboard() {
           </Link>
         </div>
 
-        {/* Course 3 */}
         <div className="wd-dashboard-course">
           <Link to="/Kambaz/Courses/CS1003/Home" className="wd-dashboard-course-link">
             <img src="/images/mongodb.jpeg" width={200} alt="MongoDB logo" />
