@@ -7,7 +7,7 @@ import {
   FormControl,
   ButtonGroup,
 } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "./store";
 import {
@@ -24,7 +24,6 @@ export default function Dashboard() {
     (state: RootState) => state.enrollmentReducer
   );
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   if (!currentUser) {
     return <h2 className="p-3">Please sign in to see your Dashboard.</h2>;

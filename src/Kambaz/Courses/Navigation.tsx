@@ -3,7 +3,7 @@ import { ListGroup } from "react-bootstrap";
 import { NavLink, useParams } from "react-router-dom";
 
 interface CourseNavigationProps {
-  isFaculty: boolean;
+  isFaculty: boolean ;
 }
 
 export default function CourseNavigation({ isFaculty }: CourseNavigationProps) {

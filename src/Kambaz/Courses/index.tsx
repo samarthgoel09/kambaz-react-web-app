@@ -35,7 +35,7 @@ export default function Courses() {
 
       <div className="d-flex">
         <div className="d-none d-md-block bg-white border-end pe-4">
-          <CourseNavigation />
+          <CourseNavigation isFaculty={isFaculty}/>
         </div>
         <div className="flex-fill ps-4">
           <Routes>
@@ -43,11 +43,11 @@ export default function Courses() {
 
             <Route
               path="Home"
-              element={<Home course={course} />}
+              element={<Home />}
             />
             <Route
               path="Modules"
-              element={<Modules isFaculty={isFaculty} />}
+              element={<Modules />}
             />
             <Route
               path="Assignments"
@@ -55,7 +55,7 @@ export default function Courses() {
             />
             <Route
               path="Assignments/:aid"
-              element={<AssignmentEditor isFaculty={isFaculty} />}
+              element={<AssignmentEditor />}
             />
             <Route path="People" element={<PeopleTable />} />
             <Route path="Piazza" element={<h2 className="p-3">Piazza</h2>} />
