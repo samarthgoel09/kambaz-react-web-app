@@ -1,16 +1,24 @@
+
 import { ListGroup } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store";
 
 export default function AccountNavigation() {
-  const items = [
-    { to: "/Kambaz/Account/Signin",  label: "Signin",  id: "wd-account-signin-link"  },
-    { to: "/Kambaz/Account/Signup",  label: "Signup",  id: "wd-account-signup-link"  },
-    { to: "/Kambaz/Account/Profile", label: "Profile", id: "wd-account-profile-link" },
-  ];
+  const currentUser = useSelector(
+    (state: RootState) => state.accountReducer.currentUser
+  );
+
+  const links = currentUser
+    ? [{ to: "/Kambaz/Account/Profile", label: "Profile", id: "wd-account-profile-link" }]
+    : [
+        { to: "/Kambaz/Account/Signin", label: "Signin", id: "wd-account-signin-link" },
+        { to: "/Kambaz/Account/Signup", label: "Signup", id: "wd-account-signup-link" },
+      ];
 
   return (
     <ListGroup id="wd-account-nav" className="wd fs-5 rounded-0 bg-white">
-      {items.map(({ to, label, id }) => (
+      {links.map(({ to, label, id }) => (
         <NavLink key={id} to={to} style={{ textDecoration: "none" }}>
           {({ isActive }: { isActive: boolean }) => (
             <ListGroup.Item
