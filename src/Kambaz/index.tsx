@@ -20,15 +20,7 @@ export default function Kambaz() {
             path="Dashboard"
             element={
               <ProtectedRoute>
-                <Dashboard courses={[]} course={undefined} setCourse={function (): void {
-                  throw new Error("Function not implemented.");
-                } } addNewCourse={function (): void {
-                  throw new Error("Function not implemented.");
-                } } deleteCourse={function (): void {
-                  throw new Error("Function not implemented.");
-                } } updateCourse={function (): void {
-                  throw new Error("Function not implemented.");
-                } } isFaculty={false} />
+                <Dashboard />
               </ProtectedRoute>
             }
           />
