@@ -1,5 +1,7 @@
+
+
 import { useState, useEffect } from "react";
-import { FormControl, Button } from "react-bootstrap";
+import { Form, Row, Col, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setCurrentUser } from "./reducer";
@@ -37,98 +39,132 @@ export default function Profile() {
   }
 
   return (
-    <div className="wd-profile-screen" style={{ padding: "2rem" }}>
+    <div className="wd-profile-screen p-4">
       <h3>Profile</h3>
       <hr />
-      <div>
-        <label htmlFor="wd-username" style={{ fontWeight: "600" }}>
-          Username
-        </label>
-        <FormControl
-          defaultValue={profile.username}
-          id="wd-username"
-          className="mb-2"
-          onChange={(e) =>
-            setProfile({ ...profile, username: e.target.value })
-          }
-        />
 
-        <label htmlFor="wd-password" style={{ fontWeight: "600" }}>
-          Password
-        </label>
-        <FormControl
-          defaultValue={profile.password}
-          id="wd-password"
-          className="mb-2"
-          onChange={(e) =>
-            setProfile({ ...profile, password: e.target.value })
-          }
-        />
+      <Form>
+        <Form.Group as={Row} className="mb-3" controlId="wd-username">
+          <Form.Label column sm={2} style={{ fontWeight: 600 }}>
+            Username
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="text"
+              defaultValue={profile.username}
+              onChange={(e) =>
+                setProfile({ ...profile, username: e.target.value })
+              }
+            />
+          </Col>
+        </Form.Group>
 
-        <label htmlFor="wd-firstname" style={{ fontWeight: "600" }}>
-          First Name
-        </label>
-        <FormControl
-          defaultValue={profile.firstName}
-          id="wd-firstname"
-          className="mb-2"
-          onChange={(e) =>
-            setProfile({ ...profile, firstName: e.target.value })
-          }
-        />
+        <Form.Group as={Row} className="mb-3" controlId="wd-password">
+          <Form.Label column sm={2} style={{ fontWeight: 600 }}>
+            Password
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="password"
+              defaultValue={profile.password}
+              onChange={(e) =>
+                setProfile({ ...profile, password: e.target.value })
+              }
+            />
+          </Col>
+        </Form.Group>
 
-        <label htmlFor="wd-lastname" style={{ fontWeight: "600" }}>
-          Last Name
-        </label>
-        <FormControl
-          defaultValue={profile.lastName}
-          id="wd-lastname"
-          className="mb-2"
-          onChange={(e) =>
-            setProfile({ ...profile, lastName: e.target.value })
-          }
-        />
+        <Form.Group as={Row} className="mb-3" controlId="wd-firstname">
+          <Form.Label column sm={2} style={{ fontWeight: 600 }}>
+            First Name
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="text"
+              defaultValue={profile.firstName}
+              onChange={(e) =>
+                setProfile({ ...profile, firstName: e.target.value })
+              }
+            />
+          </Col>
+        </Form.Group>
 
-        <label htmlFor="wd-dob" style={{ fontWeight: "600" }}>
-          Date of Birth
-        </label>
-        <FormControl
-          defaultValue={profile.dob}
-          id="wd-dob"
-          className="mb-2"
-          type="date"
-          onChange={(e) => setProfile({ ...profile, dob: e.target.value })}
-        />
+        <Form.Group as={Row} className="mb-3" controlId="wd-lastname">
+          <Form.Label column sm={2} style={{ fontWeight: 600 }}>
+            Last Name
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="text"
+              defaultValue={profile.lastName}
+              onChange={(e) =>
+                setProfile({ ...profile, lastName: e.target.value })
+              }
+            />
+          </Col>
+        </Form.Group>
 
-        <label htmlFor="wd-email" style={{ fontWeight: "600" }}>
-          Email
-        </label>
-        <FormControl
-          defaultValue={profile.email}
-          id="wd-email"
-          className="mb-2"
-          onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-        />
+        <Form.Group as={Row} className="mb-3" controlId="wd-dob">
+          <Form.Label column sm={2} style={{ fontWeight: 600 }}>
+            Date of Birth
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="date"
+              defaultValue={profile.dob}
+              onChange={(e) => setProfile({ ...profile, dob: e.target.value })}
+            />
+          </Col>
+        </Form.Group>
 
-        <label htmlFor="wd-role" style={{ fontWeight: "600" }}>
-          Role
-        </label>
-        <select
-          onChange={(e) => setProfile({ ...profile, role: e.target.value as any })}
-          className="form-control mb-2"
-          id="wd-role"
-          defaultValue={profile.role}
-        >
-          <option value="USER">User</option>
-          <option value="ADMIN">Admin</option>
-          <option value="FACULTY">Faculty</option>
-          <option value="STUDENT">Student</option>
-        </select>
+        <Form.Group as={Row} className="mb-3" controlId="wd-email">
+          <Form.Label column sm={2} style={{ fontWeight: 600 }}>
+            Email
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="email"
+              defaultValue={profile.email}
+              onChange={(e) =>
+                setProfile({ ...profile, email: e.target.value })
+              }
+            />
+          </Col>
+        </Form.Group>
 
-        <Button onClick={signout} className="w-100 mb-2" id="wd-signout-btn">
-          Sign out
-        </Button>
-      </div>
+        <Form.Group as={Row} className="mb-4" controlId="wd-role">
+          <Form.Label column sm={2} style={{ fontWeight: 600 }}>
+            Role
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Select
+              defaultValue={profile.role}
+              onChange={(e) =>
+                setProfile({ ...profile, role: e.target.value as any })
+              }
+            >
+              <option value="USER">User</option>
+              <option value="ADMIN">Admin</option>
+              <option value="FACULTY">Faculty</option>
+              <option value="STUDENT">Student</option>
+            </Form.Select>
+          </Col>
+        </Form.Group>
+
+        <Form.Group as={Row}>
+          <Col sm={{ span: 10, offset: 2 }}>
+            <Button
+              variant="danger"
+              size="lg"
+              className="w-100"
+              onClick={signout}
+              id="wd-signout-btn"
+            >
+              Sign out
+            </Button>
+          </Col>
+        </Form.Group>
+      </Form>
     </div>
   );
 }

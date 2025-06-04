@@ -269,7 +269,6 @@ export default function AssignmentEditor() {
           <Button
             variant="danger"
             onClick={() => {
-              // Wrap plain text into minimal HTML:
               const htmlToStore = `<p>${descriptionText}</p>`;
               if (aid === "New") {
                 dispatch(
