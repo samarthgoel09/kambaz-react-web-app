@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -17,10 +18,9 @@ import {
   Modal,
   Form,
 } from "react-bootstrap";
-import { FaSearch, FaPlus } from "react-icons/fa";
+import { FaSearch, FaPlus, FaRegFileAlt } from "react-icons/fa";
 import { BsGripVertical, BsTrash, BsGear } from "react-icons/bs";
 import { IoEllipsisVertical } from "react-icons/io5";
-import { FaRegFileAlt } from "react-icons/fa";
 import GreenCheckmark from "../Modules/GreenCheckmark";
 import "../../styles.css";
 
@@ -71,7 +71,6 @@ export default function Assignments({ isFaculty }: AssignmentsProps) {
           availableUntil: newAvailableUntil,
         })
       );
-      // Reset form and close modal
       setNewTitle("");
       setNewDescription("");
       setNewPoints(0);
@@ -187,8 +186,7 @@ export default function Assignments({ isFaculty }: AssignmentsProps) {
                     className="text-secondary mb-1"
                     style={{ fontSize: "0.9rem" }}
                   >
-                    <strong>Not available until</strong>{" "}
-                    {a.availableFrom || "TBD"}
+                    <strong>Not available until</strong> {a.availableFrom || "TBD"}
                   </div>
                   <div className="text-secondary" style={{ fontSize: "0.9rem" }}>
                     <strong>Due</strong> {a.dueDate || "TBD"} | {a.points} pts
@@ -197,26 +195,34 @@ export default function Assignments({ isFaculty }: AssignmentsProps) {
               )}
             </div>
 
-            {isFaculty && (
-              <div className="d-flex align-items-center">
-                {!a.editing && (
+            <div className="d-flex align-items-center">
+              {isFaculty && !a.editing && (
+                <>
                   <BsGear
                     onClick={() => handleEditAssignment(a._id)}
                     className="text-primary me-3 fs-5"
                   />
-                )}
-                {!a.editing && (
                   <BsTrash
                     onClick={() => handleDeleteAssignment(a._id)}
-                    className="text-danger fs-5"
+                    className="text-danger fs-5 me-3"
                   />
-                )}
-                {a.editing && <GreenCheckmark />}
-                {a.editing && (
-                  <IoEllipsisVertical className="fs-4 text-secondary ms-3" />
-                )}
-              </div>
-            )}
+                </>
+              )}
+
+              {a.editing && (
+                <>
+                  <GreenCheckmark className="me-3" />
+                  <IoEllipsisVertical className="fs-4 text-secondary me-3" />
+                </>
+              )}
+
+              {!a.editing && (
+                <>
+                  <GreenCheckmark className="me-3" />
+                  <IoEllipsisVertical className="fs-4 text-secondary" />
+                </>
+              )}
+            </div>
           </ListGroup.Item>
         ))}
       </ListGroup>
