@@ -24,7 +24,7 @@ export default function KambazNavigation() {
       match: (p: string) => p === "/Kambaz/Dashboard",
     },
     {
-      to: "/Kambaz/Courses",
+      to: "/Kambaz/Dashboard",
       label: "Courses",
       Icon: LiaBookSolid,
       match: (p: string) => p.startsWith("/Kambaz/Courses"),

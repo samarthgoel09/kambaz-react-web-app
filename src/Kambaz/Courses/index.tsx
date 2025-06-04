@@ -1,4 +1,3 @@
-
 import { useParams, useLocation, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store";

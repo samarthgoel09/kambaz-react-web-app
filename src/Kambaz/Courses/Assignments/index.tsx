@@ -241,7 +241,7 @@ export default function Assignments({ isFaculty }: AssignmentsProps) {
                 <FormControl
                   as="textarea"
                   rows={3}
-                  placeholder="<p>Describe assignment…</p>"
+                  placeholder="Describe assignment…"
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
                 />

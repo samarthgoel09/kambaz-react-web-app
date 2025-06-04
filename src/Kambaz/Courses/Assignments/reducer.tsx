@@ -1,4 +1,3 @@
-// src/Kambaz/Courses/Assignments/reducer.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 import rawAssignments from "../../Database/assignments.json";
