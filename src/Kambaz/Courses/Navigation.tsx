@@ -3,10 +3,10 @@ import { ListGroup } from "react-bootstrap";
 import { NavLink, useParams } from "react-router-dom";
 
 interface CourseNavigationProps {
-  isFaculty: boolean ;
+  isFaculty: boolean;
 }
 
-export default function CourseNavigation({ isFaculty }: CourseNavigationProps) {
+export default function CourseNavigation({ }: CourseNavigationProps) {
   const { cid } = useParams<{ cid: string }>();
   const links = [
     "Home",
@@ -48,29 +48,6 @@ export default function CourseNavigation({ isFaculty }: CourseNavigationProps) {
           </NavLink>
         );
       })}
-
-      {isFaculty && (
-        <NavLink to={`/Kambaz/Courses/${cid}/Edit`} style={{ textDecoration: "none" }}>
-          {({ isActive }: { isActive: boolean }) => (
-            <ListGroup.Item
-              id="wd-course-edit-link"
-              className={[
-                "list-group-item",
-                "list-group-item-action",
-                "w-100",
-                "py-3",
-                "border-0",
-                "bg-white",
-                isActive
-                  ? "text-dark border-start border-3 border-dark"
-                  : "text-danger",
-              ].join(" ")}
-            >
-              Edit Course
-            </ListGroup.Item>
-          )}
-        </NavLink>
-      )}
     </ListGroup>
   );
 }
