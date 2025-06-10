@@ -1,89 +1,78 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Form, Button, FormControl } from "react-bootstrap";
+import { FormControl, Button, Container, Row, Col } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import * as db from "../Database";
+import { useDispatch } from "react-redux";
+import * as client from "./client";
+import { setCurrentUser } from "./reducer";
 
 export default function Signup() {
-  const navigate = useNavigate();
-  const [credentials, setCredentials] = useState<{ username: string; password: string }>({
+  const [credentials, setCredentials] = useState({
     username: "",
     password: "",
   });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!credentials.username.trim() || !credentials.password.trim()) {
-      alert("Please enter both username and password.");
+      alert("Please enter both a username and password.");
       return;
     }
-    db.users.push({
-      _id: String(Date.now()),
-      username: credentials.username.trim(),
-      password: credentials.password.trim(),
-      firstName: "",
-      lastName: "",
-      email: "",
-      dob: "",
-      role: "STUDENT",
-      loginId: "",
-      section: "",
-      lastActivity: "",
-      totalActivity: "",
-    });
-    alert("Signup successful. Please sign in.");
-    navigate("/Kambaz/Account/Signin", { replace: true });
+    try {
+      const newUser = await client.signup(credentials);
+      dispatch(setCurrentUser(newUser));
+      navigate("/Kambaz/Account/Profile", { replace: true });
+    } catch (err: any) {
+      if (err.response?.status === 400) {
+        alert(err.response.data.message);
+      } else {
+        console.error(err);
+        alert("Signup failed—please try again.");
+      }
+    }
   };
 
   return (
     <Container fluid className="vh-100 g-0">
       <Row className="h-100 g-0">
-        <Col
-          xs={12}
-          md={6}
-          className="d-flex align-items-start justify-content-center"
-        >
-          <div style={{ width: "100%", maxWidth: 400, padding: "2rem" }}>
-            <h1 className="mb-4">Signup</h1>
-            <Form onSubmit={handleSignup}>
-              <Form.Group controlId="wd-signup-username" className="mb-3">
-                <Form.Label>Username</Form.Label>
-                <FormControl
-                  type="text"
-                  placeholder="username"
-                  value={credentials.username}
-                  onChange={(e) =>
-                    setCredentials({ ...credentials, username: e.target.value })
-                  }
-                />
-              </Form.Group>
-
-              <Form.Group controlId="wd-signup-password" className="mb-4">
-                <Form.Label>Password</Form.Label>
-                <FormControl
-                  type="password"
-                  placeholder="password"
-                  value={credentials.password}
-                  onChange={(e) =>
-                    setCredentials({ ...credentials, password: e.target.value })
-                  }
-                />
-              </Form.Group>
-
+        <Col xs={12} md={6} className="d-flex align-items-center justify-content-center">
+          <div style={{ width: 320, padding: "2rem" }}>
+            <h1 className="mb-4">Sign up</h1>
+            <form onSubmit={handleSignup}>
+              <FormControl
+                className="mb-3"
+                placeholder="Username"
+                value={credentials.username}
+                onChange={(e) =>
+                  setCredentials({ ...credentials, username: e.target.value })
+                }
+                id="wd-signup-username"
+              />
+              <FormControl
+                className="mb-4"
+                type="password"
+                placeholder="Password"
+                value={credentials.password}
+                onChange={(e) =>
+                  setCredentials({ ...credentials, password: e.target.value })
+                }
+                id="wd-signup-password"
+              />
               <Button
                 id="wd-signup-btn"
                 variant="primary"
                 type="submit"
                 className="w-100 mb-3"
               >
-                Signup
+                Sign up
               </Button>
-
-              <div className="text-center">
-                <Link id="wd-signin-link" to="/Kambaz/Account/Signin">
-                  Sign in
-                </Link>
-              </div>
-            </Form>
+            </form>
+            <div className="text-center">
+              <Link id="wd-signin-link" to="/Kambaz/Account/Signin">
+                Already have an account? Sign in
+              </Link>
+            </div>
           </div>
         </Col>
       </Row>

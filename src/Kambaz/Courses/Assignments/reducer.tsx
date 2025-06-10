@@ -1,80 +1,90 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { v4 as uuidv4 } from "uuid";
-import rawAssignments from "../../Database/assignments.json";
-
-export interface EntryOptions {
-  text: boolean;
-  website: boolean;
-  media: boolean;
-  annotation: boolean;
-  file: boolean;
-}
+import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
+import * as client from "./client";
 
 export interface Assignment {
   _id: string;
   title: string;
-  course: string;
   descriptionHtml: string;
   points: number;
-  group: string;
-  displayGradeAs: string;
-  submissionType: string;
-  entryOptions: EntryOptions;
-  assignTo: string;
-  dueDate: string;
   availableFrom: string;
+  dueDate: string;
   availableUntil: string;
   editing?: boolean;
 }
 
-interface AssignmentsState {
+interface State {
   assignments: Assignment[];
+  status: "idle" | "loading" | "failed";
 }
 
-const initialState: AssignmentsState = {
-  assignments: (rawAssignments as Assignment[]).map((a) => ({
-    ...a,
-    editing: false,
-  })),
+const initialState: State = {
+  assignments: [],
+  status: "idle",
 };
+export const fetchAssignments = createAsyncThunk(
+  "assignments/fetch",
+  async (cid: string) => client.findAssignmentsForCourse(cid)
+);
 
-const assignmentsSlice = createSlice({
+export const createAssignment = createAsyncThunk(
+  "assignments/create",
+  async (data: { cid: string; assn: any }) =>
+    client.createAssignmentForCourse(data.cid, data.assn)
+);
+
+export const updateAssignmentById = createAsyncThunk(
+  "assignments/update",
+  async (assn: Assignment) => client.updateAssignment(assn)
+);
+
+export const deleteAssignmentById = createAsyncThunk(
+  "assignments/delete",
+  async (aid: string) => {
+    await client.deleteAssignment(aid);
+    return aid;
+  }
+);
+
+const slice = createSlice({
   name: "assignments",
   initialState,
   reducers: {
-    addAssignment: (
+    setEditing(
       state,
-      action: PayloadAction<Omit<Assignment, "_id" | "editing">>
-    ) => {
-      const toInsert: Assignment = {
-        _id: uuidv4(),
-        editing: false,
-        ...action.payload,
-      };
-      state.assignments.push(toInsert);
-    },
-    deleteAssignment: (state, action: PayloadAction<string>) => {
-      state.assignments = state.assignments.filter(
-        (a) => a._id !== action.payload
-      );
-    },
-    editAssignment: (state, action: PayloadAction<string>) => {
+      action: PayloadAction<{ id: string; editing: boolean }>
+    ) {
       state.assignments = state.assignments.map((a) =>
-        a._id === action.payload ? { ...a, editing: true } : a
-      );
-    },
-    updateAssignment: (state, action: PayloadAction<Assignment>) => {
-      state.assignments = state.assignments.map((a) =>
-        a._id === action.payload._id ? action.payload : a
+        a._id === action.payload.id
+          ? { ...a, editing: action.payload.editing }
+          : a
       );
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchAssignments.pending, (s) => {
+        s.status = "loading";
+      })
+      .addCase(fetchAssignments.fulfilled, (s, a) => {
+        s.status = "idle";
+        s.assignments = a.payload;
+      })
+      .addCase(fetchAssignments.rejected, (s) => {
+        s.status = "failed";
+      })
+      .addCase(createAssignment.fulfilled, (s, a) => {
+        s.assignments.push(a.payload);
+      })
+      .addCase(updateAssignmentById.fulfilled, (s, a) => {
+        s.assignments = s.assignments.map((x) =>
+          x._id === a.payload._id ? { ...a.payload, editing: false } : x
+        );
+      })
+      .addCase(deleteAssignmentById.fulfilled, (s, a) => {
+        s.assignments = s.assignments.filter((x) => x._id !== a.payload);
+      });
+  },
 });
 
-export const {
-  addAssignment,
-  deleteAssignment,
-  editAssignment,
-  updateAssignment,
-} = assignmentsSlice.actions;
-export default assignmentsSlice.reducer;
+export const { setEditing } = slice.actions;
+export default slice.reducer;
