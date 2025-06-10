@@ -1,16 +1,25 @@
-// src/Kambaz/Courses/Modules/index.tsx
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../store";
 
 import {
+  setModules,
   addModule,
-  deleteModule,
+  deleteModule as deleteModuleAction,
   editModule,
-  updateModule,
+  changeModuleName,      
+  updateModule as updateModuleAction,
 } from "./reducer";
+
+import {
+  findModulesForCourse,
+  createModuleForCourse,
+} from "../client";              
+import {
+  updateModule as updateModuleClient,
+  deleteModule as deleteModuleClient,
+} from "./client";             
 
 import ModulesControls from "./ModulesControls";
 import ModuleControlButtons from "./ModuleControlButtons";
@@ -24,32 +33,30 @@ import GreenCheckmark from "./GreenCheckmark";
 export default function Modules() {
   const { cid } = useParams<{ cid: string }>();
   const dispatch = useDispatch();
-
-  const currentUser = useSelector((state: RootState) => state.accountReducer.currentUser);
+  const currentUser = useSelector((s: RootState) => s.accountReducer.currentUser);
   const isFaculty = currentUser?.role === "FACULTY";
-
   const [moduleName, setModuleName] = useState("");
-
-  const modules = useSelector((state: RootState) =>
-    state.modulesReducer.modules.filter((m: any) => m.course === cid)
-  );
-
-  const handleAddModule = () => {
-    if (!moduleName.trim()) return;
-    dispatch(addModule({ name: moduleName, course: cid! }));
+  const modules = useSelector((s: RootState) => s.modulesReducer.modules);
+  useEffect(() => {
+    if (!cid) return;
+    findModulesForCourse(cid).then((mods) => dispatch(setModules(mods)));
+  }, [cid, dispatch]);
+  const handleAddModule = async () => {
+    if (!cid || !moduleName.trim()) return;
+    const newMod = await createModuleForCourse(cid, { name: moduleName });
+    dispatch(addModule(newMod));
     setModuleName("");
   };
-
-  const handleDeleteModule = (moduleId: string) => {
-    dispatch(deleteModule(moduleId));
+  const handleDeleteModule = async (mid: string) => {
+    await deleteModuleClient(mid);
+    dispatch(deleteModuleAction(mid));
   };
-
-  const handleEditModule = (moduleId: string) => {
-    dispatch(editModule(moduleId));
+  const handleEditModule = (mid: string) => {
+    dispatch(editModule(mid));
   };
-
-  const handleUpdateModule = (updatedModule: any) => {
-    dispatch(updateModule(updatedModule));
+  const handleSaveModule = async (mod: any) => {
+    const updated = await updateModuleClient(mod);
+    dispatch(updateModuleAction(updated));
   };
 
   return (
@@ -65,26 +72,27 @@ export default function Modules() {
       <hr />
 
       <ListGroup id="wd-modules" className="rounded-0">
-        {modules.map((mod: any) => (
+        {modules.map((mod) => (
           <ListGroup.Item
             key={mod._id}
-            style={{ backgroundColor: "#e2e4e6" }}
             className="wd-module p-0 mb-3 fs-5 border-0"
+            style={{ backgroundColor: "#e2e4e6" }}
           >
             <div className="wd-title p-3 ps-2 d-flex align-items-center">
               <BsGripVertical className="me-2 fs-3 text-secondary" />
 
-              {!mod.editing && <span className="flex-grow-1">{mod.name}</span>}
-              {mod.editing && (
+              {!mod.editing ? (
+                <span className="flex-grow-1">{mod.name}</span>
+              ) : (
                 <FormControl
                   className="w-50 d-inline-block me-3"
-                  defaultValue={mod.name}
+                  value={mod.name}
                   onChange={(e) =>
-                    handleUpdateModule({ ...mod, name: e.target.value })
+                    dispatch(changeModuleName({ id: mod._id, name: e.target.value }))
                   }
-                  onKeyDown={(e) => {
+                  onKeyDown={async (e) => {
                     if (e.key === "Enter") {
-                      handleUpdateModule({ ...mod, editing: false });
+                      await handleSaveModule({ ...mod, editing: false });
                     }
                   }}
                 />
@@ -95,15 +103,9 @@ export default function Modules() {
                   moduleId={mod._id}
                   editModule={handleEditModule}
                   deleteModule={handleDeleteModule}
-                  publishModule={() =>
-                    console.log("Publish Module", mod._id)
-                  }
-                  addLesson={() =>
-                    console.log("Add Lesson under", mod._id)
-                  }
-                  onMore={() =>
-                    console.log("More options for", mod._id)
-                  }
+                  publishModule={() => console.log("Publish Module", mod._id)}
+                  addLesson={() => console.log("Add Lesson under", mod._id)}
+                  onMore={() => console.log("More options for", mod._id)}
                 />
               ) : (
                 <div className="d-flex align-items-center">
@@ -113,9 +115,9 @@ export default function Modules() {
               )}
             </div>
 
-            {mod.lessons && mod.lessons.length > 0 && (
+            {mod.lessons?.length > 0 && (
               <ListGroup className="wd-lessons rounded-0 border-top-0">
-                {mod.lessons.map((lesson: any) => (
+                {mod.lessons.map((lesson) => (
                   <ListGroup.Item
                     key={lesson._id}
                     className="wd-lesson p-3 ps-1 d-flex align-items-center"
@@ -125,12 +127,8 @@ export default function Modules() {
                     {isFaculty ? (
                       <LessonControlButtons
                         lessonId={lesson._id}
-                        editLesson={(lid) =>
-                          console.log("Edit lesson", lid)
-                        }
-                        deleteLesson={(lid) =>
-                          console.log("Delete lesson", lid)
-                        }
+                        editLesson={(lid) => console.log("Edit lesson", lid)}
+                        deleteLesson={(lid) => console.log("Delete lesson", lid)}
                       />
                     ) : (
                       <div className="d-flex align-items-center">
