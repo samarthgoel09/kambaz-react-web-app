@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaUserCircle, FaPencilAlt, FaCheck } from "react-icons/fa";
 import { IoCloseSharp }                      from "react-icons/io5";
 import { FormControl }                        from "react-bootstrap";
@@ -47,13 +47,6 @@ export default function PeopleDetails({
     onClose();
   };
 
-  const handleCancelEdit = () => {
-    setName(`${user.firstName} ${user.lastName}`);
-    setEmail(user.email);
-    setRole(user.role);
-    setSection(user.section);
-    setEditing(false);
-  };
 
   const handleDelete = async () => {
     await onDelete(uid);

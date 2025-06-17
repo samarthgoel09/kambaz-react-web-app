@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
 import { Row, Col, InputGroup, Form, Button } from "react-bootstrap";
 import PeopleTable from "../Courses/People/Table";
