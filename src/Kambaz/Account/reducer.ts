@@ -16,11 +16,11 @@ export interface User {
 }
 
 interface AccountState {
-  currentUser: User | null;
+  currentUser: User | null | undefined;
 }
 
 const initialState: AccountState = {
-  currentUser: null,
+  currentUser: undefined,
 };
 
 const accountSlice = createSlice({

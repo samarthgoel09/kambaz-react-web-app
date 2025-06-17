@@ -1,4 +1,3 @@
-
 import { ListGroup } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -10,10 +9,24 @@ export default function AccountNavigation() {
   );
 
   const links = currentUser
-    ? [{ to: "/Kambaz/Account/Profile", label: "Profile", id: "wd-account-profile-link" }]
+    ? [
+        { to: "/Kambaz/Account/Profile", label: "Profile", id: "wd-account-profile-link" },
+        // only include Users for ADMIN
+        ...(currentUser.role === "ADMIN"
+          ? [{ to: "/Kambaz/Account/Users", label: "Users", id: "wd-account-users-link" }]
+          : []),
+      ]
     : [
-        { to: "/Kambaz/Account/Signin", label: "Signin", id: "wd-account-signin-link" },
-        { to: "/Kambaz/Account/Signup", label: "Signup", id: "wd-account-signup-link" },
+        {
+          to:    "/Kambaz/Account/Signin",
+          label: "Signin",
+          id:    "wd-account-signin-link",
+        },
+        {
+          to:    "/Kambaz/Account/Signup",
+          label: "Signup",
+          id:    "wd-account-signup-link",
+        },
       ];
 
   return (

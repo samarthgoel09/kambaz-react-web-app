@@ -1,48 +1,85 @@
-import { Table } from "react-bootstrap";
+import { useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
-import { useParams } from "react-router-dom";
-import * as db from "../../Database";
+import PeopleDetails    from "./Details";
 
-export default function PeopleTable() {
-  const { cid } = useParams<{ cid: string }>();
-  const { users, enrollments } = db;
-  const roster = users.filter((usr) =>
-    enrollments.some((enr) => enr.user === usr._id && enr.course === cid)
-  );
+interface User {
+  _id: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  loginId?: string;
+  section?: string;
+  role?: string;
+  lastActivity?: string;
+  totalActivity?: string;
+}
+
+interface PeopleTableProps {
+  users?: User[];
+  onDelete?: (userId: string) => Promise<void>;
+  onUpdate?: (updated: User) => Promise<void>;
+}
+
+export default function PeopleTable({
+  users = [],
+  onDelete,
+  onUpdate,
+}: PeopleTableProps) {
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   return (
-    <div id="wd-people-table" className="p-3">
-      <Table striped hover>
+    <div id="wd-people-table" className="position-relative">
+      <table className="table table-striped">
         <thead>
           <tr>
             <th>Name</th>
-            <th>Login ID</th>
+            <th>Email</th>
+            <th>Login ID</th>
             <th>Section</th>
             <th>Role</th>
-            <th>Last Activity</th>
-            <th>Total Activity</th>
+            <th>Last Activity</th>
+            <th>Total Activity</th>
           </tr>
         </thead>
         <tbody>
-          {roster.map((user, idx) => (
-            <tr
-              key={user._id}
-              className={idx % 2 === 0 ? "table-light" : ""}
-            >
-              <td className="wd-full-name text-nowrap">
-                <FaUserCircle className="me-2 fs-1 text-secondary" />
-                <span className="wd-first-name">{user.firstName}</span>{" "}
-                <span className="wd-last-name">{user.lastName}</span>
+          {users.map((u, idx) => (
+            <tr key={u._id} className={idx % 2 === 0 ? "table-light" : ""}>
+              <td className="text-nowrap">
+                <a
+                  href="#"
+                  className="text-danger text-decoration-none"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSelectedUserId(u._id);
+                  }}
+                >
+                  <FaUserCircle className="me-2 fs-1 text-secondary" />
+                  {u.firstName} {u.lastName}
+                </a>
               </td>
-              <td className="wd-login-id">{user.loginId}</td>
-              <td className="wd-section">{user.section}</td>
-              <td className="wd-role">{user.role}</td>
-              <td className="wd-last-activity">{user.lastActivity}</td>
-              <td className="wd-total-activity">{user.totalActivity}</td>
+              <td>{u.email}</td>
+              <td>{u.loginId}</td>
+              <td>{u.section}</td>
+              <td>{u.role}</td>
+              <td>{u.lastActivity}</td>
+              <td>{u.totalActivity}</td>
             </tr>
           ))}
         </tbody>
-      </Table>
+      </table>
+
+      {selectedUserId && (
+        <PeopleDetails
+          uid={selectedUserId}
+          onClose={() => setSelectedUserId(null)}
+          onDelete={() =>
+            onDelete ? onDelete(selectedUserId!) : Promise.resolve()
+          }
+          onUpdate={(u) =>
+            onUpdate ? onUpdate(u) : Promise.resolve()
+          }
+        />
+      )}
     </div>
   );
 }
