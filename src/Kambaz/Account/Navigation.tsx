@@ -11,7 +11,6 @@ export default function AccountNavigation() {
   const links = currentUser
     ? [
         { to: "/Kambaz/Account/Profile", label: "Profile", id: "wd-account-profile-link" },
-        // only include Users for ADMIN
         ...(currentUser.role === "ADMIN"
           ? [{ to: "/Kambaz/Account/Users", label: "Users", id: "wd-account-users-link" }]
           : []),

@@ -21,6 +21,7 @@ const initialState: State = {
   assignments: [],
   status: "idle",
 };
+
 export const fetchAssignments = createAsyncThunk(
   "assignments/fetch",
   async (cid: string) => client.findAssignmentsForCourse(cid)
@@ -49,10 +50,7 @@ const slice = createSlice({
   name: "assignments",
   initialState,
   reducers: {
-    setEditing(
-      state,
-      action: PayloadAction<{ id: string; editing: boolean }>
-    ) {
+    setEditing(state, action: PayloadAction<{ id: string; editing: boolean }>) {
       state.assignments = state.assignments.map((a) =>
         a._id === action.payload.id
           ? { ...a, editing: action.payload.editing }

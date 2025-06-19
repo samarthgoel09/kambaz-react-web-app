@@ -1,20 +1,19 @@
 import { useState, useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
 import { Row, Col, InputGroup, Form, Button } from "react-bootstrap";
-import PeopleTable from "../Courses/People/Table";
+import PeopleTable, { type User } from "../Courses/People/Table";
 import * as client from "./client";
 
 export default function Users() {
-  const [users, setUsers]           = useState<any[]>([]);
+  const [users, setUsers]           = useState<User[]>([]);
   const [roleFilter, setRoleFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
   const [loading, setLoading]       = useState(false);
 
-  // Fetch & filter
   const loadUsers = async () => {
     setLoading(true);
     try {
-      let data;
+      let data: User[];
       if (nameFilter.trim()) {
         data = await client.findUsersByPartialName(nameFilter.trim());
       } else if (roleFilter) {
@@ -23,6 +22,9 @@ export default function Users() {
         data = await client.findAllUsers();
       }
       setUsers(data);
+    } catch (e) {
+      console.error("Failed to load users:", e);
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -32,48 +34,37 @@ export default function Users() {
     loadUsers();
   }, [roleFilter, nameFilter]);
 
-  // Create new user
-// inside src/Kambaz/Account/Users.tsx
+  const handleCreateUser = async () => {
+    setLoading(true);
+    try {
+      await client.createUser({
+        firstName: "New",
+        lastName:  `User${Date.now()}`,
+        username:  `newuser${Date.now()}`,
+        password:  "password123",
+        email:     `email${Date.now()}@neu.edu`,
+        section:   "S101",
+        role:      "STUDENT",
+      });
+      await loadUsers();
+      setNameFilter("");
+      setRoleFilter("");
+    } catch (e: any) {
+      console.error("Error creating user:", e.response?.data || e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-const handleCreateUser = async () => {
-  console.log("🔔 Creating new user…");
-  try {
-    const newUser = await client.createUser({
-      firstName: "New",
-      lastName:  `User${users.length + 1}`,
-      username:  `newuser${Date.now()}`,
-      password:  "password123",
-      email:     `email${users.length + 1}@neu.edu`,
-      section:   "S101",
-      role:      "STUDENT",
-    });
-    console.log("✅ Created user:", newUser);
-
-    // Immediately add the created user into state:
-    setUsers((prev) => [...prev, newUser]);
-
-    // Optionally, reset any filters so it shows up:
-    setNameFilter("");
-    setRoleFilter("");
-  } catch (e: any) {
-    console.error("❌ Error creating user", e.response?.data || e.message);
-  }
-};
-
-
-
-  // Delete user callback
   const handleDeleteUser = async (userId: string) => {
     await client.deleteUser(userId);
     setUsers((prev) => prev.filter((u) => u._id !== userId));
   };
 
-  // Update user callback
-  const handleUpdateUser = async (updated: any) => {
-    const saved = await client.updateUser(updated);
-    setUsers((prev) =>
-      prev.map((u) => (u._id === saved._id ? saved : u))
-    );
+  const handleUpdateUser = async (user: User): Promise<User> => {
+    const saved = await client.updateUser(user);
+    await loadUsers();
+    return saved;
   };
 
   return (
@@ -83,6 +74,7 @@ const handleCreateUser = async () => {
       <Button
         onClick={handleCreateUser}
         className="btn-danger mb-3 float-end wd-add-people"
+        disabled={loading}
       >
         <FaPlus className="me-2" /> New User
       </Button>
@@ -95,13 +87,16 @@ const handleCreateUser = async () => {
               value={nameFilter}
               onChange={(e) => setNameFilter(e.target.value)}
             />
-            <Button onClick={loadUsers}>Search</Button>
+            <Button onClick={loadUsers} disabled={loading}>
+              Search
+            </Button>
           </InputGroup>
         </Col>
         <Col md={3}>
           <Form.Select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
+            disabled={loading}
           >
             <option value="">All Roles</option>
             <option value="ADMIN">Administrators</option>
@@ -111,23 +106,28 @@ const handleCreateUser = async () => {
           </Form.Select>
         </Col>
         <Col md={2}>
-          <Button variant="link" onClick={() => {
-            setNameFilter(""); 
-            setRoleFilter("");
-          }}>
+          <Button
+            variant="link"
+            onClick={() => {
+              setNameFilter("");
+              setRoleFilter("");
+            }}
+            disabled={loading}
+          >
             Reset
           </Button>
         </Col>
       </Row>
 
-      {loading
-        ? <div>Loading users…</div>
-        : <PeopleTable
-            users={users}
-            onDelete={handleDeleteUser}
-            onUpdate={handleUpdateUser}
-          />
-      }
+      {loading ? (
+        <div>Loading users…</div>
+      ) : (
+        <PeopleTable
+          users={users}
+          onDelete={handleDeleteUser}
+          onUpdate={handleUpdateUser}
+        />
+      )}
     </div>
   );
 }

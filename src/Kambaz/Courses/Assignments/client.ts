@@ -1,20 +1,39 @@
 import axios from "axios";
-const axiosWithCred = axios.create({ withCredentials: true });
-const REMOTE        = import.meta.env.VITE_REMOTE_SERVER;
-const COURSES_API   = `${REMOTE}/api/courses`;
-const ASSNS_API     = `${REMOTE}/api/assignments`;
+
+const axiosWithCredentials = axios.create({ withCredentials: true });
+
+const REMOTE_SERVER = import.meta.env.VITE_REMOTE_SERVER || "http://localhost:4000";
+const COURSES_API   = `${REMOTE_SERVER}/api/courses`;
+const ASSNS_API     = `${REMOTE_SERVER}/api/assignments`;
+
+export interface Assignment {
+  _id: string;
+  title: string;
+  descriptionHtml: string;
+  points: number;
+  availableFrom: string;
+  dueDate: string;
+  availableUntil: string;
+  editing?: boolean;
+}
 
 export const findAssignmentsForCourse = (cid: string) =>
-  axiosWithCred.get(`${COURSES_API}/${cid}/assignments`).then(r => r.data);
+  axiosWithCredentials
+    .get<Assignment[]>(`${COURSES_API}/${cid}/assignments`)
+    .then(r => r.data);
 
 export const findAssignmentById = (aid: string) =>
-  axiosWithCred.get(`${ASSNS_API}/${aid}`).then(r => r.data);
+  axiosWithCredentials.get<Assignment>(`${ASSNS_API}/${aid}`).then(r => r.data);
 
-export const createAssignmentForCourse = (cid: string, assn: any) =>
-  axiosWithCred.post(`${COURSES_API}/${cid}/assignments`, assn).then(r => r.data);
+export const createAssignmentForCourse = (cid: string, assn: Partial<Assignment>) =>
+  axiosWithCredentials
+    .post<Assignment>(`${COURSES_API}/${cid}/assignments`, assn)
+    .then(r => r.data);
 
-export const updateAssignment = (assn: any) =>
-  axiosWithCred.put(`${ASSNS_API}/${assn._id}`, assn).then(r => r.data);
+export const updateAssignment = (assn: Assignment) =>
+  axiosWithCredentials
+    .put<Assignment>(`${ASSNS_API}/${assn._id}`, assn)
+    .then(r => r.data);
 
 export const deleteAssignment = (aid: string) =>
-  axiosWithCred.delete(`${ASSNS_API}/${aid}`);
+  axiosWithCredentials.delete(`${ASSNS_API}/${aid}`);

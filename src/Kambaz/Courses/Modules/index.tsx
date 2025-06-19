@@ -1,62 +1,68 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../store";
-
 import {
   setModules,
-  addModule,
-  deleteModule as deleteModuleAction,
   editModule,
-  changeModuleName,      
-  updateModule as updateModuleAction,
+  changeModuleName,
+  saveModule,
+  removeModule,
 } from "./reducer";
-
 import {
   findModulesForCourse,
   createModuleForCourse,
-} from "../client";              
-import {
-  updateModule as updateModuleClient,
-  deleteModule as deleteModuleClient,
-} from "./client";             
+  updateModule,
+  deleteModule,
+} from "./client";
 
 import ModulesControls from "./ModulesControls";
 import ModuleControlButtons from "./ModuleControlButtons";
-import LessonControlButtons from "./LessonControlButtons";
+import GreenCheckmark from "./GreenCheckmark";
 
 import { ListGroup, FormControl } from "react-bootstrap";
 import { BsGripVertical } from "react-icons/bs";
 import { FaEllipsisV } from "react-icons/fa";
-import GreenCheckmark from "./GreenCheckmark";
 
 export default function Modules() {
   const { cid } = useParams<{ cid: string }>();
   const dispatch = useDispatch();
+  const modules = useSelector((s: RootState) => s.modulesReducer.modules);
   const currentUser = useSelector((s: RootState) => s.accountReducer.currentUser);
   const isFaculty = currentUser?.role === "FACULTY";
-  const [moduleName, setModuleName] = useState("");
-  const modules = useSelector((s: RootState) => s.modulesReducer.modules);
-  useEffect(() => {
+
+  const [newName, setNewName] = useState("");
+
+  const reload = async () => {
     if (!cid) return;
-    findModulesForCourse(cid).then((mods) => dispatch(setModules(mods)));
+    const mods = await findModulesForCourse(cid);
+    dispatch(setModules(mods));
+  };
+
+  useEffect(() => {
+    reload();
   }, [cid, dispatch]);
-  const handleAddModule = async () => {
-    if (!cid || !moduleName.trim()) return;
-    const newMod = await createModuleForCourse(cid, { name: moduleName });
-    dispatch(addModule(newMod));
-    setModuleName("");
+
+  const handleAdd = async () => {
+    if (!cid || !newName.trim()) return;
+    await createModuleForCourse(cid, { name: newName });
+    setNewName("");
+    await reload();
   };
-  const handleDeleteModule = async (mid: string) => {
-    await deleteModuleClient(mid);
-    dispatch(deleteModuleAction(mid));
+
+  const handleDelete = async (mid: string) => {
+    if (!window.confirm("Delete this module?")) return;
+    await deleteModule(mid);
+    dispatch(removeModule(mid));
   };
-  const handleEditModule = (mid: string) => {
+
+  const handleEdit = (mid: string) => {
     dispatch(editModule(mid));
   };
-  const handleSaveModule = async (mod: any) => {
-    const updated = await updateModuleClient(mod);
-    dispatch(updateModuleAction(updated));
+
+  const handleSave = async (mod: any) => {
+    const updated = await updateModule(mod);
+    dispatch(saveModule(updated));
   };
 
   return (
@@ -65,82 +71,71 @@ export default function Modules() {
 
       <ModulesControls
         isFaculty={isFaculty}
-        moduleName={moduleName}
-        setModuleName={setModuleName}
-        handleAddModule={handleAddModule}
+        moduleName={newName}
+        setModuleName={setNewName}
+        handleAddModule={handleAdd}
       />
+
       <hr />
 
       <ListGroup id="wd-modules" className="rounded-0">
         {modules.map((mod) => (
-          <ListGroup.Item
-            key={mod._id}
-            className="wd-module p-0 mb-3 fs-5 border-0"
-            style={{ backgroundColor: "#e2e4e6" }}
-          >
-            <div className="wd-title p-3 ps-2 d-flex align-items-center">
-              <BsGripVertical className="me-2 fs-3 text-secondary" />
+          <React.Fragment key={mod._id}>
+            <ListGroup.Item
+              className="wd-module p-0 mb-3 fs-5 border-0"
+              style={{ backgroundColor: "#e2e4e6" }}
+            >
+              <div className="wd-title p-3 ps-2 d-flex align-items-center">
+                <BsGripVertical className="me-2 fs-3 text-secondary" />
 
-              {!mod.editing ? (
-                <span className="flex-grow-1">{mod.name}</span>
-              ) : (
-                <FormControl
-                  className="w-50 d-inline-block me-3"
-                  value={mod.name}
-                  onChange={(e) =>
-                    dispatch(changeModuleName({ id: mod._id, name: e.target.value }))
-                  }
-                  onKeyDown={async (e) => {
-                    if (e.key === "Enter") {
-                      await handleSaveModule({ ...mod, editing: false });
+                {!mod.editing ? (
+                  <span className="flex-grow-1">{mod.name}</span>
+                ) : (
+                  <FormControl
+                    className="w-50 d-inline-block me-3"
+                    value={mod.name}
+                    onChange={(e) =>
+                      dispatch(changeModuleName({ id: mod._id, name: e.target.value }))
                     }
-                  }}
-                />
-              )}
+                    onKeyDown={async (e) => {
+                      if (e.key === "Enter") {
+                        await handleSave({ ...mod, editing: false });
+                      }
+                    }}
+                  />
+                )}
 
-              {isFaculty ? (
-                <ModuleControlButtons
-                  moduleId={mod._id}
-                  editModule={handleEditModule}
-                  deleteModule={handleDeleteModule}
-                  publishModule={() => console.log("Publish Module", mod._id)}
-                  addLesson={() => console.log("Add Lesson under", mod._id)}
-                  onMore={() => console.log("More options for", mod._id)}
-                />
-              ) : (
-                <div className="d-flex align-items-center">
-                  <GreenCheckmark className="me-2" />
-                  <FaEllipsisV className="fs-4 text-secondary" />
-                </div>
-              )}
-            </div>
+                {isFaculty ? (
+                  <ModuleControlButtons
+                    moduleId={mod._id}
+                    editModule={handleEdit}
+                    deleteModule={handleDelete}
+                    onMore={() => console.log("More options for", mod._id)}
+                  />
+                ) : (
+                  <div className="d-flex align-items-center ms-auto">
+                    <GreenCheckmark className="me-2" />
+                    <FaEllipsisV className="fs-4 text-secondary" />
+                  </div>
+                )}
+              </div>
+            </ListGroup.Item>
 
-            {mod.lessons?.length > 0 && (
-              <ListGroup className="wd-lessons rounded-0 border-top-0">
+            {mod.lessons && mod.lessons.length > 0 && (
+              <ListGroup className="mb-4 ps-4">
                 {mod.lessons.map((lesson) => (
                   <ListGroup.Item
                     key={lesson._id}
-                    className="wd-lesson p-3 ps-1 d-flex align-items-center"
+                    className="p-2 border-0 bg-white d-flex align-items-center"
                   >
-                    <BsGripVertical className="me-2 fs-3 text-secondary" />
+                    <BsGripVertical className="me-2 fs-3 text-secondary opacity-50" />
                     <span className="flex-grow-1">{lesson.name}</span>
-                    {isFaculty ? (
-                      <LessonControlButtons
-                        lessonId={lesson._id}
-                        editLesson={(lid) => console.log("Edit lesson", lid)}
-                        deleteLesson={(lid) => console.log("Delete lesson", lid)}
-                      />
-                    ) : (
-                      <div className="d-flex align-items-center">
-                        <GreenCheckmark className="me-2" />
-                        <FaEllipsisV className="fs-4 text-secondary" />
-                      </div>
-                    )}
+                    {isFaculty ? null : <GreenCheckmark className="ms-2" />}
                   </ListGroup.Item>
                 ))}
               </ListGroup>
             )}
-          </ListGroup.Item>
+          </React.Fragment>
         ))}
       </ListGroup>
     </div>
