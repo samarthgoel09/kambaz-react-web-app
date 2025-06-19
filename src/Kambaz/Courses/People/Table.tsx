@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
-import PeopleDetails    from "./Details";
+import PeopleDetails from "./Details";
 
-interface User {
+export interface User {
   _id: string;
   firstName?: string;
   lastName?: string;
@@ -17,7 +17,7 @@ interface User {
 interface PeopleTableProps {
   users?: User[];
   onDelete?: (userId: string) => Promise<void>;
-  onUpdate?: (updated: User) => Promise<void>;
+  onUpdate?: (updated: User) => Promise<User>;
 }
 
 export default function PeopleTable({
@@ -54,15 +54,15 @@ export default function PeopleTable({
                   }}
                 >
                   <FaUserCircle className="me-2 fs-1 text-secondary" />
-                  {u.firstName} {u.lastName}
+                  {u.firstName || ""} {u.lastName || ""}
                 </a>
               </td>
-              <td>{u.email}</td>
-              <td>{u.loginId}</td>
-              <td>{u.section}</td>
-              <td>{u.role}</td>
-              <td>{u.lastActivity}</td>
-              <td>{u.totalActivity}</td>
+              <td>{u.email || ""}</td>
+              <td>{u.loginId || ""}</td>
+              <td>{u.section || ""}</td>
+              <td>{u.role || ""}</td>
+              <td>{u.lastActivity || ""}</td>
+              <td>{u.totalActivity || ""}</td>
             </tr>
           ))}
         </tbody>
@@ -73,11 +73,9 @@ export default function PeopleTable({
           uid={selectedUserId}
           onClose={() => setSelectedUserId(null)}
           onDelete={() =>
-            onDelete ? onDelete(selectedUserId!) : Promise.resolve()
+            onDelete ? onDelete(selectedUserId) : Promise.resolve()
           }
-          onUpdate={(u) =>
-            onUpdate ? onUpdate(u) : Promise.resolve()
-          }
+          onUpdate={(u) => (onUpdate ? onUpdate(u) : Promise.resolve(u))}
         />
       )}
     </div>

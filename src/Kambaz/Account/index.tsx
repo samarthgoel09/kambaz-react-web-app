@@ -7,7 +7,7 @@ import Signin    from "./Signin";
 import Signup    from "./Signup";
 import Profile   from "./Profile";
 import Users     from "./Users";
-import ProtectedRoute from "./ProtectedRoute"; // ensure you have this
+import ProtectedRoute from "./ProtectedRoute"; 
 
 export default function Account() {
   const currentUser = useSelector(
@@ -21,7 +21,6 @@ export default function Account() {
       </div>
       <div className="flex-fill">
         <Routes>
-          {/* 1) Redirect to relative sub-page */}
           <Route
             path="/"
             element={
@@ -32,11 +31,9 @@ export default function Account() {
             }
           />
 
-          {/* 2) Public auth routes */}
           <Route path="Signin" element={<Signin />} />
           <Route path="Signup" element={<Signup />} />
 
-          {/* 3) Protected Profile */}
           <Route
             path="Profile"
             element={
@@ -46,7 +43,6 @@ export default function Account() {
             }
           />
 
-          {/* 4) Admin‐only Users */}
           {currentUser?.role === "ADMIN" && (
             <Route
               path="Users"

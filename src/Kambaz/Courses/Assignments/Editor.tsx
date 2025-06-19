@@ -2,18 +2,11 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../store";
-
-import {
-  fetchAssignments,
-  createAssignment,
-  updateAssignmentById,
-  type Assignment,
-} from "./reducer";
-
-import { Form, Button, Row, Col } from "react-bootstrap";
+import { fetchAssignments, createAssignment, updateAssignmentById, type Assignment } from "./reducer";
+import { Form, Button } from "react-bootstrap";
 
 export default function AssignmentEditor() {
-  const { cid, aid } = useParams<{ cid: string; aid: string }>();
+  const { cid = "", aid = "" } = useParams<{ cid?: string; aid?: string }>();
   const isNew = aid === "New";
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -25,11 +18,10 @@ export default function AssignmentEditor() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [points, setPoints] = useState(0);
-  const [dueDate, setDueDate] = useState("");
   const [availFrom, setAvailFrom] = useState("");
+  const [dueDate, setDueDate] = useState("");
   const [availUntil, setAvailUntil] = useState("");
 
-  // Load list if needed, then populate
   useEffect(() => {
     if (!isNew && !existing && cid) {
       dispatch(fetchAssignments(cid));
@@ -37,15 +29,15 @@ export default function AssignmentEditor() {
       setTitle(existing.title);
       setDescription(existing.descriptionHtml.replace(/<[^>]*>/g, ""));
       setPoints(existing.points);
-      setDueDate(existing.dueDate);
-      setAvailFrom(existing.availableFrom);
-      setAvailUntil(existing.availableUntil);
+      setAvailFrom(existing.availableFrom || "");
+      setDueDate(existing.dueDate || "");
+      setAvailUntil(existing.availableUntil || "");
     }
-  }, [existing, cid]);
+  }, [cid, existing, dispatch, isNew]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const payload: Assignment = {
-      _id: aid!,
+      _id: aid,
       title: title.trim(),
       descriptionHtml: `<p>${description}</p>`,
       points,
@@ -53,12 +45,17 @@ export default function AssignmentEditor() {
       dueDate,
       availableUntil: availUntil,
     };
-    if (isNew) {
-      dispatch(createAssignment({ cid: cid!, assn: payload }));
-    } else {
-      dispatch(updateAssignmentById(payload));
+
+    try {
+      if (isNew) {
+        await dispatch(createAssignment({ cid, assn: payload })).unwrap();
+      } else {
+        await dispatch(updateAssignmentById(payload)).unwrap();
+      }
+      navigate(`/Kambaz/Courses/${cid}/Assignments`, { replace: true });
+    } catch (err) {
+      console.error("Failed to save assignment:", err);
     }
-    navigate(`/Kambaz/Courses/${cid}/Assignments`, { replace: true });
   };
 
   return (
@@ -70,95 +67,25 @@ export default function AssignmentEditor() {
       </h2>
       <hr />
       <Form>
-        <Form.Group controlId="wd-assn-title" className="mb-3">
+        <Form.Group className="mb-3">
           <Form.Label>Title</Form.Label>
           <Form.Control
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter assignment name"
           />
         </Form.Group>
-
-        <Form.Group controlId="wd-assn-desc" className="mb-4">
-          <Form.Label>Description</Form.Label>
-          <Form.Control
-            as="textarea"
-            rows={4}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </Form.Group>
-
-        <Row className="mb-3">
-          <Col sm={3}>
-            <Form.Label>Points</Form.Label>
-            <Form.Control
-              type="number"
-              value={points}
-              onChange={(e) =>
-                setPoints(parseInt(e.target.value, 10) || 0)
-              }
-            />
-          </Col>
-        </Row>
-
-        <Row className="mb-3">
-          <Form.Label column sm={2}>
-            Available From
-          </Form.Label>
-          <Col sm={4}>
-            <Form.Control
-              type="datetime-local"
-              value={availFrom}
-              onChange={(e) => setAvailFrom(e.target.value)}
-            />
-          </Col>
-        </Row>
-
-        <Row className="mb-3">
-          <Form.Label column sm={2}>
-            Due Date
-          </Form.Label>
-          <Col sm={4}>
-            <Form.Control
-              type="datetime-local"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-            />
-          </Col>
-        </Row>
-
-        <Row className="mb-4">
-          <Form.Label column sm={2}>
-            Available Until
-          </Form.Label>
-          <Col sm={4}>
-            <Form.Control
-              type="datetime-local"
-              value={availUntil}
-              onChange={(e) => setAvailUntil(e.target.value)}
-            />
-          </Col>
-        </Row>
-
         <div className="d-flex justify-content-end">
           <Button
             variant="secondary"
-            onClick={() =>
-              navigate(`/Kambaz/Courses/${cid}/Assignments`, {
-                replace: true,
-              })
-            }
             className="me-2"
+            onClick={() =>
+              navigate(`/Kambaz/Courses/${cid}/Assignments`, { replace: true })
+            }
           >
             Cancel
           </Button>
-          <Button
-            variant="primary"
-            onClick={handleSave}
-            id="wd-save-assignment-click"
-          >
+          <Button variant="primary" onClick={handleSave}>
             Save
           </Button>
         </div>

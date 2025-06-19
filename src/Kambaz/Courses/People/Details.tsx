@@ -23,7 +23,6 @@ export default function PeopleDetails({
   const [role, setRole]       = useState("");
   const [section, setSection] = useState("");
 
-  // fetch when uid changes
   useEffect(() => {
     import("../../Account/client").then(({ findUserById }) =>
       findUserById(uid).then((u) => {
