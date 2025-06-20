@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,6 +13,7 @@ import {
   updateAssignmentById,
 } from "./reducer";
 
+import AssignmentEditor from "./Editor";
 
 import {
   InputGroup,
@@ -30,7 +32,7 @@ interface AssignmentsProps {
 }
 
 export default function Assignments({ isFaculty }: AssignmentsProps) {
-  const { cid } = useParams<{ cid: string }>();
+  const { cid, aid } = useParams<{ cid: string; aid?: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const assignments = useSelector(
     (s: RootState) => s.assignmentsReducer.assignments
@@ -48,6 +50,9 @@ export default function Assignments({ isFaculty }: AssignmentsProps) {
   useEffect(() => {
     if (cid) dispatch(fetchAssignments(cid));
   }, [cid, dispatch]);
+  if (aid && aid !== "New") {
+    return <AssignmentEditor />;
+  }
 
   if (status === "loading") {
     return <div>Loading assignments…</div>;
@@ -161,7 +166,7 @@ export default function Assignments({ isFaculty }: AssignmentsProps) {
                     <BsGripVertical className="me-2" />
                     <FaRegFileAlt className="me-2 text-success" />
                     <Link
-                      to={`Assignments/${a._id}`}
+                      to={`${a._id}`}
                       className="text-decoration-none text-dark"
                     >
                       <strong style={{ fontSize: "1.1rem" }}>
