@@ -1,13 +1,19 @@
 import axios from "axios";
-const REMOTE_SERVER = import.meta.env.VITE_REMOTE_SERVER || "";  
-const axiosWithCredentials = axios.create({
+
+// Pull in your backend URL in prod; "" → relative in dev
+const BASE_URL = import.meta.env.VITE_REMOTE_SERVER || "";
+
+// One Axios instance for everything
+const api = axios.create({
+  baseURL: BASE_URL,
   withCredentials: true,
-    baseURL: REMOTE_SERVER,
 });
-const COURSES_API   = `${REMOTE_SERVER}/api/courses`;
 
-export const USERS_API   = `${REMOTE_SERVER}/api/users`;
+// ——— Endpoint paths ———
+const USERS_PATH   = "/api/users";
+const COURSES_PATH = "/api/courses";
 
+// ——— Types ———
 export interface Course {
   _id: string;
   name: string;
@@ -15,80 +21,79 @@ export interface Course {
   description: string;
   image: string;
 }
+
 export interface Enrollment {
   _id: string;
   user: string;
   course: string;
 }
 
+// ——— User routes ———
 export const signin = (creds: { username: string; password: string }) =>
-  axiosWithCredentials.post(`${USERS_API}/signin`, creds).then(res => res.data);
+  api.post(`${USERS_PATH}/signin`, creds).then((res) => res.data);
 
-export const signup = (user: { username: string; password: string }) =>
-  axiosWithCredentials.post(`${USERS_API}/signup`, user).then(res => res.data);
+export const signup = (user: {
+  username: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  section?: string;
+  role: string;
+}) => api.post(USERS_PATH, user).then((res) => res.data);
 
-export async function profile(): Promise<any > {
+export async function profile(): Promise<any> {
   try {
-    const { data } = await axiosWithCredentials.get(`${USERS_API}/profile`);
+    const { data } = await api.get(`${USERS_PATH}/profile`);
     return data;
   } catch (err: any) {
-    if (err.response?.status === 401) {
-      return null;
-    }
+    if (err.response?.status === 401) return null;
     throw err;
   }
 }
 
-
 export const updateUser = (user: any) =>
-  axiosWithCredentials.put(`${USERS_API}/${user._id}`, user).then(res => res.data);
+  api.put(`${USERS_PATH}/${user._id}`, user).then((res) => res.data);
 
 export const signout = () =>
-  axiosWithCredentials.post(`${USERS_API}/signout`).then(res => res.data);
+  api.post(`${USERS_PATH}/signout`).then((res) => res.data);
 
+// ——— Course / Enrollment routes ———
 export const findMyCourses = (): Promise<Course[]> =>
-  axiosWithCredentials.get<Course[]>(`${USERS_API}/current/courses`).then(res => res.data);
+  api.get<Course[]>(`${USERS_PATH}/current/courses`).then((res) => res.data);
 
-export const createCourse = (course: Partial<Course>): Promise<Course> =>
-  axiosWithCredentials.post<Course>(`${USERS_API}/current/courses`, course).then(res => res.data);
+export const createCourse = (
+  course: Partial<Course>
+): Promise<Course> =>
+  api.post(`${USERS_PATH}/current/courses`, course).then((res) => res.data);
 
 export const enrollInCourse = (courseId: string): Promise<void> =>
-  axiosWithCredentials.post(`${USERS_API}/current/courses/${courseId}`).then();
+  api.post(`${USERS_PATH}/current/courses/${courseId}`).then(() => {});
 
 export const unenrollFromCourse = (courseId: string): Promise<void> =>
-  axiosWithCredentials.delete(`${USERS_API}/current/courses/${courseId}`).then();
+  api.delete(`${USERS_PATH}/current/courses/${courseId}`).then(() => {});
 
 export const fetchMyEnrollments = (): Promise<Enrollment[]> =>
-  axiosWithCredentials.get<Enrollment[]>(`${USERS_API}/current/enrollments`).then(res => res.data);
+  api.get<Enrollment[]>(`${USERS_PATH}/current/enrollments`).then((res) => res.data);
 
 export const deleteCourse = (id: string) =>
-  axiosWithCredentials.delete(`${COURSES_API}/${id}`).then(res => res.data);
+  api.delete(`${COURSES_PATH}/${id}`).then((res) => res.data);
 
 export const updateCourse = (course: Course) =>
-  axiosWithCredentials.put(`${COURSES_API}/${course._id}`, course).then(res => res.data);
+  api.put(`${COURSES_PATH}/${course._id}`, course).then((res) => res.data);
 
-export const createUser = (user: {
-  firstName?: string;
-  lastName?: string;
-  username: string;
-  password: string;
-  email?: string;
-  section?: string;
-  role: string;
-}) =>
-  axiosWithCredentials.post(`${USERS_API}`, user).then(res => res.data);
-
+// ——— Admin / Misc user queries ———
 export const findAllUsers = (): Promise<any[]> =>
-  axiosWithCredentials.get(`${USERS_API}`).then(res => res.data);
+  api.get(USERS_PATH).then((res) => res.data);
 
 export const findUsersByRole = (role: string) =>
-  axiosWithCredentials.get(`${USERS_API}`, { params: { role } }).then(res => res.data);
+  api.get(USERS_PATH, { params: { role } }).then((res) => res.data);
 
 export const findUsersByPartialName = (name: string) =>
-  axiosWithCredentials.get(`${USERS_API}`, { params: { name } }).then(res => res.data);
+  api.get(USERS_PATH, { params: { name } }).then((res) => res.data);
 
 export const findUserById = (id: string): Promise<any> =>
-  axiosWithCredentials.get(`${USERS_API}/${id}`).then(res => res.data);
+  api.get(`${USERS_PATH}/${id}`).then((res) => res.data);
 
 export const deleteUser = (id: string): Promise<void> =>
-  axiosWithCredentials.delete(`${USERS_API}/${id}`).then();
+  api.delete(`${USERS_PATH}/${id}`).then(() => {});

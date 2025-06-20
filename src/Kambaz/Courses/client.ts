@@ -1,10 +1,15 @@
 import axios from "axios";
 
-const axiosWithCredentials = axios.create({ withCredentials: true });
-
+// point this at your deployed backend in production via Netlify/Env,
+// or fallback to localhost in dev
 const REMOTE_SERVER = import.meta.env.VITE_REMOTE_SERVER || "http://localhost:4000";
-const COURSES_API   = `${REMOTE_SERVER}/api/courses`;
 
+const api = axios.create({
+  baseURL: REMOTE_SERVER,
+  withCredentials: true,
+});
+
+// ——— Types ———
 export interface Course {
   _id: string;
   name: string;
@@ -19,56 +24,59 @@ export interface Enrollment {
   course: string;
 }
 
-
-export const fetchAllCourses = async () => {
-  const { data } = await axiosWithCredentials.get(COURSES_API);
+// ——— Course Endpoints ———
+export const fetchAllCourses = async (): Promise<Course[]> => {
+  const { data } = await api.get("/api/courses");
   return data;
 };
 
-export const createCourse = async (course: any) => {
-  const { data } = await axiosWithCredentials.post(COURSES_API, course);
+export const createCourse = async (course: Partial<Course>): Promise<Course> => {
+  const { data } = await api.post("/api/courses", course);
   return data;
 };
 
-export const updateCourse = async (course: any) => {
-  const { data } = await axiosWithCredentials.put(
-    `${COURSES_API}/${course._id}`,
-    course
-  );
+export const updateCourse = async (course: Course): Promise<Course> => {
+  const { data } = await api.put(`/api/courses/${course._id}`, course);
   return data;
 };
 
-export const deleteCourse = (id: string) =>
-  axiosWithCredentials.delete(`${COURSES_API}/${id}`).then(r => r.status);
+export const deleteCourse = async (id: string): Promise<number> => {
+  const { status } = await api.delete(`/api/courses/${id}`);
+  return status;
+};
 
-
-export const findMyCourses = () =>
-  axiosWithCredentials.get<Course[]>(`${REMOTE_SERVER}/api/users/current/courses`)
-    .then(r => r.data);
-
-export const enrollInCourse = (courseId: string) =>
-  axiosWithCredentials.post(`${REMOTE_SERVER}/api/users/current/enrollments/${courseId}`);
-
-export const unenrollFromCourse = (courseId: string) =>
-  axiosWithCredentials.delete(`${REMOTE_SERVER}/api/users/current/enrollments/${courseId}`);
-
-
-export const createModuleForCourse = (courseId: string, module: any) =>
-  axiosWithCredentials
-    .post(`${COURSES_API}/${courseId}/modules`, module)
-    .then(r => r.data);
-
-export const findModulesForCourse = async (courseId: string) => {
-  const { data } = await axiosWithCredentials.get(
-    `${COURSES_API}/${courseId}/modules`
-  );
+// ——— Enrollment & “My Courses” ———
+export const findMyCourses = async (): Promise<Course[]> => {
+  const { data } = await api.get("/api/users/current/courses");
   return data;
 };
 
+export const enrollInCourse = async (courseId: string): Promise<void> => {
+  await api.post(`/api/users/current/enrollments/${courseId}`);
+};
 
-export async function findUsersForCourse(courseId: string) {
-  const { data } = await axiosWithCredentials.get(
-    `${COURSES_API}/${courseId}/users`
-  );
+export const unenrollFromCourse = async (courseId: string): Promise<void> => {
+  await api.delete(`/api/users/current/enrollments/${courseId}`);
+};
+
+// ——— Modules ———
+export const createModuleForCourse = async (
+  courseId: string,
+  module: any
+): Promise<any> => {
+  const { data } = await api.post(`/api/courses/${courseId}/modules`, module);
   return data;
-}
+};
+
+export const findModulesForCourse = async (courseId: string): Promise<any[]> => {
+  const { data } = await api.get(`/api/courses/${courseId}/modules`);
+  return data;
+};
+
+// ——— Users in a Course ———
+export const findUsersForCourse = async (
+  courseId: string
+): Promise<any[]> => {
+  const { data } = await api.get(`/api/courses/${courseId}/users`);
+  return data;
+};

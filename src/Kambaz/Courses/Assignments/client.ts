@@ -1,11 +1,15 @@
 import axios from "axios";
 
-const axiosWithCredentials = axios.create({ withCredentials: true });
-
+// In prod set VITE_REMOTE_SERVER in Netlify (or your host); locally it falls back to localhost
 const REMOTE_SERVER = import.meta.env.VITE_REMOTE_SERVER || "http://localhost:4000";
-const COURSES_API   = `${REMOTE_SERVER}/api/courses`;
-const ASSNS_API     = `${REMOTE_SERVER}/api/assignments`;
 
+// One axios instance for all calls
+const api = axios.create({
+  baseURL: REMOTE_SERVER,
+  withCredentials: true,
+});
+
+// ——— Types ———
 export interface Assignment {
   _id: string;
   title: string;
@@ -17,23 +21,36 @@ export interface Assignment {
   editing?: boolean;
 }
 
-export const findAssignmentsForCourse = (cid: string) =>
-  axiosWithCredentials
-    .get<Assignment[]>(`${COURSES_API}/${cid}/assignments`)
-    .then(r => r.data);
+// ——— Endpoint paths ———
+const COURSES_PATH = "/api/courses";
+const ASSNS_PATH   = "/api/assignments";
 
-export const findAssignmentById = (aid: string) =>
-  axiosWithCredentials.get<Assignment>(`${ASSNS_API}/${aid}`).then(r => r.data);
+// ——— API functions ———
 
-export const createAssignmentForCourse = (cid: string, assn: Partial<Assignment>) =>
-  axiosWithCredentials
-    .post<Assignment>(`${COURSES_API}/${cid}/assignments`, assn)
-    .then(r => r.data);
+// List all assignments for a course
+export const findAssignmentsForCourse = (cid: string): Promise<Assignment[]> =>
+  api.get<Assignment[]>(`${COURSES_PATH}/${cid}/assignments`)
+     .then(res => res.data);
 
-export const updateAssignment = (assn: Assignment) =>
-  axiosWithCredentials
-    .put<Assignment>(`${ASSNS_API}/${assn._id}`, assn)
-    .then(r => r.data);
+// Fetch a single assignment by its ID
+export const findAssignmentById = (aid: string): Promise<Assignment> =>
+  api.get<Assignment>(`${ASSNS_PATH}/${aid}`)
+     .then(res => res.data);
 
-export const deleteAssignment = (aid: string) =>
-  axiosWithCredentials.delete(`${ASSNS_API}/${aid}`);
+// Create a new assignment under a given course
+export const createAssignmentForCourse = (
+  cid: string,
+  assn: Partial<Assignment>
+): Promise<Assignment> =>
+  api.post<Assignment>(`${COURSES_PATH}/${cid}/assignments`, assn)
+     .then(res => res.data);
+
+// Update an existing assignment
+export const updateAssignment = (assn: Assignment): Promise<Assignment> =>
+  api.put<Assignment>(`${ASSNS_PATH}/${assn._id}`, assn)
+     .then(res => res.data);
+
+// Delete an assignment by ID
+export const deleteAssignment = (aid: string): Promise<void> =>
+  api.delete(`${ASSNS_PATH}/${aid}`)
+     .then(() => {});
